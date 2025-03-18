@@ -5,15 +5,16 @@ import { useParams } from 'next/navigation';
 import { ChatInput } from '@/components/chat/chat-input';
 import { ChatMessage, Message } from '@/components/chat/chat-message';
 import { useChatStore } from '@/store/chat-store';
-import { ModelSelector } from '@/components/chat/model-selector';
 import { API_PATHS, DEFAULT_MODEL_ID, MessageRole } from '@/constants';
 
 export default function ChatSessionPage() {
   const params = useParams();
   const chatId = params.id as string;
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedModel, setSelectedModel] = useState(DEFAULT_MODEL_ID);
-  const [streamingEnabled, setStreamingEnabled] = useState(true);
+  
+  // 从全局存储中获取模型和流式设置
+  const selectedModel = useChatStore(state => state.selectedModel || DEFAULT_MODEL_ID);
+  const streamingEnabled = useChatStore(state => state.streamingEnabled !== undefined ? state.streamingEnabled : true);
   
   const { 
     addMessage,
@@ -77,7 +78,7 @@ export default function ChatSessionPage() {
         message: content,
         history: history,
         model: selectedModel,
-        stream: streamingEnabled // 使用状态控制是否启用流式响应
+        stream: streamingEnabled // 使用全局状态中的流式设置
       };
       
       // 如果有助手，添加系统提示词
@@ -291,7 +292,7 @@ export default function ChatSessionPage() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="border-b border-gray-200 bg-white p-4 flex justify-between items-center">
+      <div className="border-b border-gray-200 bg-white p-4">
         <div className="flex items-center">
           <h1 className="text-xl font-semibold text-gray-900">{session.title}</h1>
           {currentAssistant && (
@@ -301,12 +302,6 @@ export default function ChatSessionPage() {
             </div>
           )}
         </div>
-        <ModelSelector 
-          selectedModel={selectedModel}
-          onModelChange={setSelectedModel}
-          streamingEnabled={streamingEnabled}
-          onStreamingToggle={setStreamingEnabled}
-        />
       </div>
       
       <div className="flex-1 overflow-y-auto">

@@ -1,0 +1,282 @@
+/* 代码块基础样式 */
+pre[class*="language-"],
+code[class*="language-"] {
+  color: #ffffff;
+  font-family: var(--font-geist-mono);
+  font-size: 14px;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  line-height: 1.6;
+  tab-size: 2;
+  hyphens: none;
+  border-radius: 8px;
+  margin: 1.5em 0;
+}
+
+/* 代码块容器 */
+pre[class*="language-"] {
+  padding: 1em;
+  overflow: auto;
+  border: 1px solid #eaecef;
+  position: relative;
+}
+
+/* 行内代码 */
+:not(pre) > code[class*="language-"] {
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  white-space: normal;
+  background: #f1f1f1;
+  color: #e53935;
+  font-size: 0.9em;
+}
+
+/* 代码块头部语言标识 */
+.prism-code-label {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #e1e4e8;
+  color: #24292e;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  border-bottom-left-radius: 4px;
+  border-top-right-radius: 8px;
+  user-select: none;
+}
+
+/* 代码块行号 */
+.line-numbers .line-numbers-rows {
+  position: absolute;
+  pointer-events: none;
+  top: 1em;
+  font-size: 100%;
+  left: 0.8em;
+  width: 3em;
+  letter-spacing: -1px;
+  border-right: 1px solid #ddd;
+  user-select: none;
+}
+
+.line-numbers-rows > span {
+  display: block;
+  counter-increment: linenumber;
+  color: #999;
+}
+
+.line-numbers-rows > span:before {
+  content: counter(linenumber);
+  display: block;
+  padding-right: 0.8em;
+  text-align: right;
+}
+
+/* 语法高亮主题 */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #999988;
+  font-style: italic;
+}
+
+.token.namespace {
+  opacity: 0.7;
+}
+
+.token.string,
+.token.attr-value {
+  color: #e3116c;
+}
+
+.token.punctuation,
+.token.operator {
+  color: #393A34;
+}
+
+.token.entity,
+.token.url,
+.token.symbol,
+.token.number,
+.token.boolean,
+.token.variable,
+.token.constant,
+.token.property,
+.token.regex,
+.token.inserted {
+  color: #36acaa;
+}
+
+.token.atrule,
+.token.keyword,
+.token.attr-name {
+  color: #00a4db;
+}
+
+.token.function,
+.token.deleted {
+  color: #9a050f;
+}
+
+.token.tag,
+.token.selector {
+  color: #00009f;
+}
+
+.token.important,
+.token.function,
+.token.bold {
+  font-weight: bold;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+/* 语言特定样式 */
+/* HTML */
+.language-html .token.tag {
+  color: #005cc5;
+}
+
+.language-html .token.attr-name {
+  color: #6f42c1;
+}
+
+.language-html .token.attr-value {
+  color: #032f62;
+}
+
+/* JavaScript */
+.language-javascript .token.keyword {
+  color: #d73a49;
+}
+
+.language-javascript .token.string {
+  color: #032f62;
+}
+
+.language-javascript .token.function {
+  color: #6f42c1;
+}
+
+.language-javascript .token.class-name {
+  color: #6f42c1;
+}
+
+/* TypeScript */
+.language-typescript .token.keyword {
+  color: #d73a49;
+}
+
+.language-typescript .token.string {
+  color: #032f62;
+}
+
+.language-typescript .token.function {
+  color: #6f42c1;
+}
+
+.language-typescript .token.class-name {
+  color: #6f42c1;
+}
+
+/* Shell */
+.language-shell .token.function {
+  color: #032f62;
+}
+
+.language-shell .token.comment {
+  color: #6a737d;
+}
+
+/* 代码块悬停效果 */
+pre[class*="language-"]:hover .prism-code-label {
+  opacity: 1;
+}
+
+/* 复制按钮 */
+.code-copy-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  color: #666;
+  background-color: transparent;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+pre[class*="language-"]:hover .code-copy-button {
+  opacity: 1;
+}
+
+.code-copy-button:hover {
+  background-color: #f0f0f0;
+  border-color: #ccc;
+}
+
+/* 暗色主题支持 */
+@media (prefers-color-scheme: dark) {
+  pre[class*="language-"],
+  code[class*="language-"] {
+    color: #e1e4e8;
+  }
+  
+  pre[class*="language-"] {
+    background: #1b1f23;
+    border-color: #2f363d;
+  }
+  
+  :not(pre) > code[class*="language-"] {
+    background: #2f363d;
+    color: #ff7b72;
+  }
+  
+  .prism-code-label {
+    background: #2f363d;
+    color: #e1e4e8;
+  }
+  
+  .token.comment,
+  .token.prolog,
+  .token.doctype,
+  .token.cdata {
+    color: #8b949e;
+  }
+  
+  .token.string,
+  .token.attr-value {
+    color: #a5d6ff;
+  }
+  
+  .token.punctuation,
+  .token.operator {
+    color: #e1e4e8;
+  }
+  
+  .token.keyword {
+    color: #ff7b72;
+  }
+  
+  .token.function {
+    color: #d2a8ff;
+  }
+  
+  .code-copy-button {
+    color: #8b949e;
+    border-color: #30363d;
+  }
+  
+  .code-copy-button:hover {
+    background-color: #30363d;
+    border-color: #8b949e;
+  }
+} 

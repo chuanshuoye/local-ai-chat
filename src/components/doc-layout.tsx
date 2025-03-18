@@ -1,16 +1,16 @@
 import { ReactNode } from 'react';
-import { DocSidebar } from './doc-sidebar';
 
 interface DocLayoutProps {
+  sidebar: ReactNode;
   children: ReactNode;
 }
 
-export function DocLayout({ children }: DocLayoutProps) {
+export function DocLayout({ sidebar, children }: DocLayoutProps) {
   return (
     <div className="flex min-h-screen">
-      <DocSidebar />
-      <main className="flex-1 p-8 overflow-auto">
-        <div className="max-w-3xl mx-auto">{children}</div>
+      {sidebar}
+      <main className="flex-1 overflow-y-auto bg-gray-50">
+        {children}
       </main>
     </div>
   );

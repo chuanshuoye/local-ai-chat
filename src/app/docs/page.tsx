@@ -3,7 +3,7 @@ import { CodeBlock } from '@/components/code-block';
 
 export default function HomePage() {
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 p-20">
       <DocHeader 
         title="Next.js React AI Documentation" 
         description="A comprehensive guide to building AI-powered applications with Next.js and React" 

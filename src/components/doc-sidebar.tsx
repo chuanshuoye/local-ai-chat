@@ -12,40 +12,120 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   {
-    title: 'Introduction',
-    href: '/home',
+    title: '介绍',
+    href: '/docs',
   },
   {
-    title: 'Getting Started',
-    href: '/home/getting-started',
+    title: '快速开始',
+    href: '/docs/getting-started',
     children: [
       {
-        title: 'Installation',
-        href: '/home/getting-started/installation',
+        title: '安装配置',
+        href: '/docs/getting-started/installation',
       },
       {
-        title: 'Configuration',
-        href: '/home/getting-started/configuration',
+        title: '基本用法',
+        href: '/docs/getting-started/basic-usage',
       },
     ],
   },
   {
-    title: 'Components',
-    href: '/home/components',
+    title: '核心功能',
+    href: '/docs/features',
     children: [
       {
-        title: 'UI Components',
-        href: '/home/components/ui',
+        title: '对话管理',
+        href: '/docs/features/chat-sessions',
       },
       {
-        title: 'Layout Components',
-        href: '/home/components/layout',
+        title: '助手市场',
+        href: '/docs/features/assistants',
+      },
+      {
+        title: '模型设置',
+        href: '/docs/features/models',
+      },
+      {
+        title: '流式响应',
+        href: '/docs/features/streaming',
+      },
+      {
+        title: '自定义助手',
+        href: '/docs/features/custom-assistants',
       },
     ],
   },
   {
-    title: 'API Reference',
-    href: '/home/api',
+    title: '组件说明',
+    href: '/docs/components',
+    children: [
+      {
+        title: '聊天侧边栏',
+        href: '/docs/components/chat-sidebar',
+      },
+      {
+        title: '聊天界面',
+        href: '/docs/components/chat-interface',
+      },
+      {
+        title: '消息组件',
+        href: '/docs/components/message',
+      },
+      {
+        title: '输入组件',
+        href: '/docs/components/input',
+      },
+    ],
+  },
+  {
+    title: 'AI技术详解',
+    href: '/docs/ai-tech',
+    children: [
+      {
+        title: 'Ollama集成',
+        href: '/docs/ai-tech/ollama',
+      },
+      {
+        title: '流式生成',
+        href: '/docs/ai-tech/streaming',
+      },
+      {
+        title: '上下文管理',
+        href: '/docs/ai-tech/context',
+      },
+      {
+        title: '系统提示词',
+        href: '/docs/ai-tech/system-prompts',
+      },
+    ],
+  },
+  {
+    title: '状态管理',
+    href: '/docs/state-management',
+    children: [
+      {
+        title: '聊天存储',
+        href: '/docs/state-management/chat-store',
+      },
+      {
+        title: '持久化',
+        href: '/docs/state-management/persistence',
+      },
+    ],
+  },
+  {
+    title: '高级用法',
+    href: '/docs/advanced',
+    children: [
+      {
+        title: '性能优化',
+        href: '/docs/advanced/performance',
+      },
+      {
+        title: '自定义模型接入',
+        href: '/docs/advanced/custom-models',
+      },
+    ],
   },
 ];
 
@@ -113,7 +193,7 @@ export function DocSidebar() {
 
   return (
     <div className="w-64 border-r border-gray-200 bg-white p-4">
-      <div className="text-xl font-bold text-gray-800 mb-6">Documentation</div>
+      <div className="text-xl font-bold text-gray-800 mb-6">本地AI聊天助手</div>
       <nav className="space-y-1">{renderNavItems(navItems)}</nav>
     </div>
   );

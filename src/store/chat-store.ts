@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import { Message } from '@/components/chat/chat-message';
-import { ASSISTANT_TYPES, MessageRole, STORAGE_KEYS } from '@/constants';
+import { ASSISTANT_TYPES, MessageRole, STORAGE_KEYS, DEFAULT_MODEL_ID } from '@/constants';
 
 // 定义助手类型
 export interface Assistant {
@@ -40,6 +40,8 @@ interface ChatState {
   currentSessionId: string | null;
   assistants: Assistant[];
   showAssistantsPanel: boolean;
+  selectedModel: string;
+  streamingEnabled: boolean;
   
   // 会话相关方法
   createSession: (title?: string, assistantId?: string) => string;
@@ -61,6 +63,9 @@ interface ChatState {
   getCurrentSession: () => ChatSession | undefined;
   getSession: (sessionId: string) => ChatSession | undefined;
   getAssistant: (assistantId: string) => Assistant | undefined;
+  
+  // 设置模型和流式选项
+  setModelSettings: (model: string, streaming: boolean) => void;
 }
 
 // 创建存储
@@ -71,6 +76,8 @@ export const useChatStore = create<ChatState>()(
       currentSessionId: null,
       assistants: [...defaultAssistants],
       showAssistantsPanel: true,
+      selectedModel: DEFAULT_MODEL_ID,
+      streamingEnabled: true,
       
       // 创建新会话
       createSession: (title = '新对话', assistantId) => {
@@ -231,6 +238,11 @@ export const useChatStore = create<ChatState>()(
       // 获取指定助手
       getAssistant: (assistantId) => {
         return get().assistants.find(a => a.id === assistantId);
+      },
+      
+      // 设置模型和流式选项
+      setModelSettings: (model: string, streaming: boolean) => {
+        set({ selectedModel: model, streamingEnabled: streaming });
       }
     })),
     {
@@ -241,6 +253,8 @@ export const useChatStore = create<ChatState>()(
         currentSessionId: state.currentSessionId,
         assistants: state.assistants,
         showAssistantsPanel: state.showAssistantsPanel,
+        selectedModel: state.selectedModel,
+        streamingEnabled: state.streamingEnabled,
       }),
     }
   )
