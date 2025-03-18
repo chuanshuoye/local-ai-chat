@@ -1,5 +1,5 @@
-import { DocSidebar } from '@/components/doc-sidebar';
-import { DocLayout } from '@/components/doc-layout';
+import { DocSidebar } from '@/components/doc/doc-sidebar';
+import { DocLayout } from '@/components/doc/doc-layout';
 import { ReactNode } from 'react';
 
 export const metadata = {

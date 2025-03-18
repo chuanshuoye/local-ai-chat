@@ -49,6 +49,15 @@ Thumbs.db
 *.tmp
 *.temp
 *.swp
+*.ico
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.webp
+*.mdx
+
 
 # Build artifacts
 *.tsbuildinfo

@@ -1,5 +1,5 @@
-import { DocHeader } from '@/components/doc-header';
-import { CodeBlock } from '@/components/code-block';
+import { DocHeader } from '@/components/doc/doc-header';
+import { CodeBlock } from '@/components/doc/code-block';
 
 export default function HomePage() {
   return (

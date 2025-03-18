@@ -59,9 +59,11 @@ export const ASSISTANT_TYPES = [
 export const AVAILABLE_ICONS = ['🤖', '👨‍💻', '✍️', '🧮', '🧳', '🎨', '🎓', '📊', '🔍', '💼', '🏥', '🍳', '🎮'];
 
 // 本地存储键名
-export const STORAGE_KEYS = {
-  CHAT: 'chat-storage'
-};
+export enum STORAGE_KEYS {
+  CHAT = 'chat-storage',
+  FLOW = 'flow-storage',
+  AGENT = 'agent-storage'
+}
 
 // API 路径
 export const API_PATHS = {

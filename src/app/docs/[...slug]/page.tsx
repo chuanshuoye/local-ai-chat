@@ -1,9 +1,9 @@
 import { notFound } from 'next/navigation';
 import fs from 'fs';
 import path from 'path';
-import { MDXContent } from '@/components/mdx-content';
+import { MDXContent } from '@/components/doc/mdx-content';
 import { serialize } from 'next-mdx-remote/serialize';
-import { DocHeader } from '@/components/doc-header';
+import { DocHeader } from '@/components/doc/doc-header';
 import rehypePrism from 'rehype-prism-plus';
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
