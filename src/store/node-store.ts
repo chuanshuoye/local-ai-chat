@@ -1,9 +1,9 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import { cloneDeep } from 'lodash';
-import { FlowNodeData } from './flow-store';
+import { FlowNodeData, useFlowStore } from './flow-store';
 import { FormField, FormConfig, nodeFormConfigs, getFormConfigForNodeType } from './models/config-model';
-
+import { useAgentStore } from './agent-store';
 export type { FormField, FormConfig };
 
 // 存储类型
@@ -42,7 +42,7 @@ export const useNodeStore = create<NodeState>()(
         
         // 如果是agent类型，动态填充Agent选项
         if (nodeType === 'agent' as string) {
-          const { agents } = require('./agent-store').useAgentStore.getState();
+          const { agents } = useAgentStore.getState();
           const agentField = formConfig.fields.find((f: FormField) => f.id === 'agentId');
           if (agentField && agents) {
             agentField.options = agents.map((a: any) => ({
@@ -119,7 +119,7 @@ export const useNodeStore = create<NodeState>()(
       
       // 使用flow-store更新节点数据
       // 这里我们需要导入flow-store中的updateNodeData函数
-      const { updateNodeData } = require('./flow-store').useFlowStore.getState();
+      const { updateNodeData } = useFlowStore.getState();
       updateNodeData(selectedNodeId, formData);
       
       // 关闭抽屉
