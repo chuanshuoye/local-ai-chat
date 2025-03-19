@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import type { Agent } from '@/store/agent-store';
-import { useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router-dom';
 import { useWorkflowStore } from '@/store/workflow-store';
 
 interface AgentCardProps {
@@ -14,7 +14,7 @@ interface AgentCardProps {
 }
 
 export function AgentCard({ agent, onEdit, onDelete, onWorkflow }: AgentCardProps) {
-  const router = useRouter();
+  const navigate = useNavigate();
   const { workflows } = useWorkflowStore();
   const [agentWorkflow, setAgentWorkflow] = useState<{ name: string } | null>(null);
   
@@ -41,8 +41,21 @@ export function AgentCard({ agent, onEdit, onDelete, onWorkflow }: AgentCardProp
       onWorkflow(agent);
     } else {
       // 默认导航到工作流编辑页面
-      router.push(`/workflow?agent=${agent.id}`);
+      navigate(`/workflow?agent=${agent.id}`);
     }
+  };
+  
+  const handleViewWorkflow = () => {
+    navigate(`/workflow?agent=${agent.id}`);
+  };
+
+  const handleEditWorkflow = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/workflow?agent=${agent.id}&readonly=false`);
+  };
+
+  const handleWorkflow = () => {
+    navigate(`/workflow?agent=${agent.id}`);
   };
   
   return (
@@ -98,11 +111,7 @@ export function AgentCard({ agent, onEdit, onDelete, onWorkflow }: AgentCardProp
             <Button
               variant="secondary"
               size="sm"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                router.push(`/workflow?agent=${agent.id}&readonly=false`);
-              }}
+              onClick={handleEditWorkflow}
               className="text-blue-600 bg-blue-50 hover:bg-blue-100 border-none"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -115,11 +124,7 @@ export function AgentCard({ agent, onEdit, onDelete, onWorkflow }: AgentCardProp
           <Button
             variant="secondary"
             size="sm"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              router.push(`/workflow?agent=${agent.id}`);
-            }}
+            onClick={handleWorkflow}
             className="text-green-600 bg-green-50 hover:bg-green-100 border-none"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">

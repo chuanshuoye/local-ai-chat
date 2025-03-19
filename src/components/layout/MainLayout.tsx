@@ -1,6 +1,5 @@
 import React from 'react';
-import { usePathname } from 'next/navigation';
-import Link from 'next/link';
+import { useLocation, Link } from 'react-router-dom';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 interface NavItem {
@@ -19,7 +18,8 @@ const navItems: NavItem[] = [
 ];
 
 export function MainLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
+  const location = useLocation();
+  const pathname = location.pathname;
   
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
@@ -33,7 +33,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
           {navItems.map((item) => (
             <li key={item.key}>
               <Link 
-                href={item.path}
+                to={item.path}
                 className={`flex items-center px-4 py-3 rounded-lg transition-colors ${
                   pathname === item.path 
                     ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300' 

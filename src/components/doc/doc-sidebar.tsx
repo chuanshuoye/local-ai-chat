@@ -1,8 +1,8 @@
 'use client';
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { Link, useLocation } from 'react-router-dom';
 import { useState } from 'react';
+import { cn } from '@/lib/utils';
 
 interface NavItem {
   title: string;
@@ -130,7 +130,8 @@ const navItems: NavItem[] = [
 ];
 
 export function DocSidebar() {
-  const pathname = usePathname();
+  const location = useLocation();
+  const pathname = location.pathname;
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
 
   const toggleSection = (href: string) => {
@@ -171,12 +172,13 @@ export function DocSidebar() {
               </button>
             )}
             <Link
-              href={item.href}
-              className={`${
-                isActive
-                  ? 'font-semibold text-blue-600'
-                  : 'text-gray-700 hover:text-blue-600'
-              } transition-colors`}
+              to={item.href}
+              className={cn(
+                "text-sm transition-colors hover:text-foreground",
+                pathname === item.href
+                  ? "font-medium text-foreground"
+                  : "text-muted-foreground"
+              )}
             >
               {item.title}
             </Link>

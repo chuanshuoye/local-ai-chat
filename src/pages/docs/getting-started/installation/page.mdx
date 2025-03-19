@@ -1,0 +1,156 @@
+# 安装配置
+
+本指南将帮助你从零开始搭建本地AI聊天助手。
+
+## 环境要求
+
+- Node.js 18.0.0 或更高版本
+- Ollama (用于运行本地AI模型)
+- Git (可选，用于克隆项目)
+
+## 安装步骤
+
+### 1. 安装 Ollama
+
+首先需要安装 Ollama，这是一个让你能在本地运行大语言模型的工具。
+
+```shell
+# MacOS 使用 Homebrew 安装
+brew install ollama
+
+# Linux 使用官方脚本安装
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Windows 
+# 从 https://ollama.com/download 下载安装包
+```
+
+### 2. 克隆项目
+
+```shell
+git clone https://github.com/yourusername/local-ai-chat.git
+cd local-ai-chat
+```
+
+### 3. 安装依赖
+
+```shell
+# 使用 npm
+npm install
+
+# 或使用 yarn
+yarn install
+
+# 或使用 pnpm
+pnpm install
+```
+
+### 4. 环境配置
+
+创建 `.env.local` 文件并设置必要的环境变量：
+
+```plaintext
+# Ollama API 地址
+NEXT_PUBLIC_OLLAMA_API_URL=http://localhost:11434
+
+# 其他可选配置
+NEXT_PUBLIC_DEFAULT_MODEL=llama3.2
+NEXT_PUBLIC_ENABLE_STREAMING=true
+```
+
+## 启动开发服务器
+
+```shell
+# 使用 npm
+npm run dev
+
+# 或使用 yarn
+yarn dev
+
+# 或使用 pnpm
+pnpm dev
+```
+
+访问 `http://localhost:3000` 即可看到应用界面。
+
+## 下载模型
+
+首次使用时需要下载AI模型。打开终端，运行：
+
+```shell
+# 下载 Llama 3.2 模型
+ollama pull llama3.2
+
+# 下载其他可选模型
+ollama pull deepseek-coder-v2
+ollama pull deepseek-r1:8b
+ollama pull deepseek-r1:14b
+```
+
+## 项目结构
+
+```plaintext
+src/
+├── app/                 # Next.js 应用路由
+├── components/         # React 组件
+│   ├── chat/          # 聊天相关组件
+│   └── ui/            # 通用UI组件
+├── lib/               # 工具函数
+├── store/             # 状态管理
+└── types/             # TypeScript 类型定义
+```
+
+## 常见问题
+
+### Ollama 连接失败
+
+1. 确保 Ollama 服务正在运行
+2. 检查防火墙设置
+3. 验证 API 地址配置是否正确
+
+### 模型下载速度慢
+
+1. 检查网络连接
+2. 考虑使用代理
+3. 选择较小的模型先试用
+
+### 内存占用过高
+
+1. 使用较小的模型（如 8B 参数版本）
+2. 调整 Ollama 的内存限制
+3. 关闭不需要的应用程序
+
+## 下一步
+
+- 查看[基本用法](/docs/getting-started/basic-usage)了解如何使用应用
+- 了解[模型设置](/docs/features/models)选择合适的AI模型
+- 探索[助手市场](/docs/features/assistants)使用预设助手
+
+## 更新和维护
+
+### 更新项目
+
+```shell
+git pull
+npm install
+```
+
+### 更新模型
+
+```shell
+ollama pull llama3.2:latest
+```
+
+## 生产环境部署
+
+1. 构建应用：
+```shell
+npm run build
+```
+
+2. 启动生产服务器：
+```shell
+npm start
+```
+
+建议使用 PM2 或 Docker 进行生产环境部署，详细说明请参考[高级用法](/docs/advanced/performance)。 

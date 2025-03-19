@@ -1,7 +1,6 @@
 'use client';
 
-import { useRouter, usePathname } from 'next/navigation';
-import Link from 'next/link';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useChatStore } from '@/store/chat-store';
 import { formatDate } from '@/lib/utils';
 import { useState, useEffect, useMemo } from 'react';
@@ -10,8 +9,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Switch } from "@/components/ui/switch";
 
 export function ChatSidebar() {
-  const router = useRouter();
-  const pathname = usePathname();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const pathname = location.pathname;
   const { 
     sessions, 
     showAssistantsPanel,
@@ -80,7 +80,7 @@ export function ChatSidebar() {
   
   const handleNewChat = () => {
     const newSessionId = createSession();
-    router.push(`/chat/${newSessionId}`);
+    navigate(`/chat/${newSessionId}`);
   };
   
   const handleDeleteSession = (e: React.MouseEvent, sessionId: string) => {
@@ -92,14 +92,14 @@ export function ChatSidebar() {
       
       // 如果删除的是当前正在查看的会话，返回到聊天主页
       if (pathname === `/chat/${sessionId}`) {
-        router.push('/chat');
+        navigate('/chat');
       }
     }
   };
   
   const handleSelectAssistant = (assistantId: string) => {
     const newSessionId = createSession(undefined, assistantId);
-    router.push(`/chat/${newSessionId}`);
+    navigate(`/chat/${newSessionId}`);
   };
   
   const handleAddAssistant = () => {
@@ -124,7 +124,7 @@ export function ChatSidebar() {
       
       // 可选：创建一个使用新助手的会话
       const newSessionId = createSession(undefined, assistantId);
-      router.push(`/chat/${newSessionId}`);
+      navigate(`/chat/${newSessionId}`);
     }
   };
   
@@ -340,7 +340,7 @@ export function ChatSidebar() {
               {sessions.map((session) => (
                 <li key={session.id}>
                   <Link
-                    href={`/chat/${session.id}`}
+                    to={`/chat/${session.id}`}
                     className={`flex items-center px-3 py-2 text-sm rounded-md hover:bg-gray-800 transition-colors group ${
                       pathname === `/chat/${session.id}` ? 'bg-gray-800' : ''
                     }`}
@@ -446,8 +446,7 @@ export function ChatSidebar() {
                 </div>
 
                 <div className="pt-3 border-t border-gray-700">
-                  <Link 
-                    href="/" 
+                  <button 
                     className="flex items-center text-sm text-gray-300 hover:text-white"
                   >
                     <svg 
@@ -463,7 +462,7 @@ export function ChatSidebar() {
                       />
                     </svg>
                     返回首页
-                  </Link>
+                  </button>
                 </div>
               </div>
             </PopoverContent>

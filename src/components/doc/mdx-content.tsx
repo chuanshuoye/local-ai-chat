@@ -1,10 +1,11 @@
 'use client';
 
 /**  */
-import { MDXRemote, MDXRemoteProps } from 'next-mdx-remote';
+// import { MDXRemote, MDXRemoteProps } from 'next-mdx-remote';
+import ReactMarkdown from 'react-markdown';
 import { CodeBlock } from './code-block';
-import Link from 'next/link';
-import Image from 'next/image';
+import { Link } from 'react-router-dom';
+// import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 const components = {
@@ -54,19 +55,17 @@ const components = {
     />
   ),
   img: ({ className, alt, src, ...props }: React.ImgHTMLAttributes<HTMLImageElement>) => (
-    // 使用 Next.js Image 组件以获得更好的性能
-    <Image
+    // 使用标准 img 标签代替 Next.js Image 组件
+    <img
       src={src || ''}
-      className={cn('rounded-md border', className)}
+      className={cn('rounded-md border max-w-full h-auto', className)}
       alt={alt || ''}
       {...props}
-      width={720}
-      height={405}
     />
   ),
   a: ({ className, href, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
     <Link
-      href={href || ''}
+      to={href || ''}
       className={cn('font-medium text-blue-600 underline underline-offset-4', className)}
       {...props}
     />
@@ -87,13 +86,15 @@ const components = {
 };
 
 interface MDXContentProps {
-  source: any; // MDX 源代码内容
+  source: string; // Markdown 源代码内容
 }
 
 export function MDXContent({ source }: MDXContentProps) {
   return (
     <div className="mdx-content prose prose-gray max-w-none dark:prose-invert">
-      <MDXRemote {...source} components={components} />
+      <ReactMarkdown components={components}>
+        {source}
+      </ReactMarkdown>
     </div>
   );
 } 

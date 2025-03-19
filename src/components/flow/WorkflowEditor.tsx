@@ -20,7 +20,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const nodeTypes = {
   custom: FlowNode,
@@ -124,8 +124,9 @@ export function WorkflowEditor({
   } = useWorkflowStore();
   
   // 路由相关
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const readonly = searchParams.get('readonly') === 'true';
   
   // 保存工作流对话框状态
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
@@ -209,10 +210,10 @@ export function WorkflowEditor({
       
       // 如果是从 agent 页面来的，保存后返回到 agent 页面
       if (agentId && !readOnly) {
-        router.push(`/agents/${agentId}`);
+        navigate(`/agents/${agentId}`);
       } else {
         // 否则转到工作流管理页面
-        router.push('/workflow/manage');
+        navigate('/workflow/manage');
       }
     } catch (error) {
       alert(`保存失败: ${error instanceof Error ? error.message : '未知错误'}`);
@@ -227,6 +228,14 @@ export function WorkflowEditor({
       alert('工作流加载成功');
     } catch (error) {
       alert(`加载失败: ${error instanceof Error ? error.message : '未知错误'}`);
+    }
+  };
+
+  const handleBack = () => {
+    if (agentId) {
+      navigate(`/agents/${agentId}`);
+    } else {
+      navigate('/workflow/manage');
     }
   };
 
@@ -279,7 +288,7 @@ export function WorkflowEditor({
             <Button 
               size="sm"
               variant="outline"
-              onClick={() => router.push(`/agents/${agentId}`)}
+              onClick={handleBack}
               className="border-gray-300 hover:bg-gray-50"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MessageRole } from '@/constants';
-import Image from 'next/image';
 
 export interface Message {
   id: string;
@@ -296,11 +295,9 @@ export function ChatMessage({ message }: ChatMessageProps) {
         <div className="mt-3 border rounded-lg overflow-hidden">
           {message.attachment.type.startsWith('image/') ? (
             <div className="relative">
-              <Image 
+              <img 
                 src={message.attachment.url} 
                 alt={message.attachment.name}
-                width={500}
-                height={500}
                 className="max-w-full h-auto"
               />
               <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-2">

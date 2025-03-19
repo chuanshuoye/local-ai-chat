@@ -1,11 +1,11 @@
 
 
-# Next.js (React, Tailwind)
+# Vite Web (React, Tailwind)
 
-# Next.js with React, Tailwind CSS, and radix-ui（not lucide-react）
+# Vite with React, Tailwind CSS, and radix-ui（not lucide-react）
 
 ## Introduction
-This document outlines the best practices and coding standards for developing web applications using Next.js, React, Tailwind CSS, and radix-ui. The focus is on writing clean, maintainable, and performant code.
+This document outlines the best practices and coding standards for developing web applications using Vite, React, Tailwind CSS, and radix-ui. The focus is on writing clean, maintainable, and performant code.
 
 ## Code Style and Structure
 - **TypeScript**: Use TypeScript for all code. Prefer interfaces over types and avoid enums; use maps instead.
@@ -32,7 +32,7 @@ This document outlines the best practices and coding standards for developing we
 ## Key Conventions
 - **State Management**: Use `nuqs` for URL search parameter state management.
 - **Web Vitals**: Optimize for Web Vitals (LCP, CLS, FID).
-- **Data Fetching and Routing**: Follow Next.js documentation for Data Fetching, Rendering, and Routing.
+- **Data Fetching and Routing**: Follow Vue documentation for Data Fetching, Rendering, and Routing.
 - **Placeholder Images**: Use `https://placekitten.com/` for placeholder images in seed data.
 
 ## Project Structure
@@ -45,4 +45,4 @@ This document outlines the best practices and coding standards for developing we
 - **Modular Approach**: Adopt a modular structure where each feature or domain has its own folder containing components, hooks, and utilities specific to that feature.
 
 ## Conclusion
-By following these guidelines, you can ensure that your Next.js projects are well-structured, maintainable, and optimized for performance. This approach not only improves code quality but also enhances the overall development experience.
+By following these guidelines, you can ensure that your Vite projects are well-structured, maintainable, and optimized for performance. This approach not only improves code quality but also enhances the overall development experience.

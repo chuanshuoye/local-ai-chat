@@ -4,6 +4,9 @@ import { immer } from 'zustand/middleware/immer';
 import { STORAGE_KEYS } from '@/constants';
 import { Node, Edge } from 'react-flow-renderer';
 import { FlowNodeData } from './flow-store';
+import { useFlowStore } from './flow-store';
+import { useNodeStore } from './node-store';
+import { useAgentStore } from './agent-store';
 
 // 工作流数据结构
 export interface Workflow {
@@ -185,9 +188,6 @@ export const useWorkflowStore = create<WorkflowState>()(
         set({ isLoading: true, error: null });
         try {
           // 获取当前工作流数据
-          const { useFlowStore } = require('./flow-store');
-          const { useNodeStore } = require('./node-store');
-          
           const { nodes, edges } = useFlowStore.getState();
           
           // 收集所有节点的配置数据
@@ -237,7 +237,6 @@ export const useWorkflowStore = create<WorkflowState>()(
             // 如果提供了agentId，则同时更新Agent的工作流关联
             if (agentId) {
               try {
-                const { useAgentStore } = require('./agent-store');
                 const { updateAgent } = useAgentStore.getState();
                 await updateAgent(agentId, { 
                   workflowId: workflow.id,
@@ -281,7 +280,6 @@ export const useWorkflowStore = create<WorkflowState>()(
             return result.data;
           }
           
-          const { useFlowStore } = require('./flow-store');
           const { nodes, edges, nodeConfigs } = workflow;
           
           // 加载工作流到编辑器
