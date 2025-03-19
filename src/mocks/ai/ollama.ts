@@ -1,4 +1,4 @@
-import { HttpResponse, http } from 'msw';
+import { HttpResponse, http, HttpResponseResolver } from 'msw';
 import { MessageRole } from '@/constants';
 
 // Ollama API 的默认地址
@@ -26,8 +26,17 @@ interface OllamaRequestBody {
   system?: string;
 }
 
-export async function handleOllamaRequest(req: Request) {
-  const { message, history = [], model = 'llama3.2', systemPrompt, stream = false } = await req.json();
+// 定义API请求类型
+interface ApiRequest {
+  message: string;
+  history?: ChatMessage[];
+  model?: string;
+  systemPrompt?: string;
+  stream?: boolean;
+}
+
+export const handleOllamaRequest: HttpResponseResolver = async ({ request }) => {
+  const { message, history = [], model = 'llama3.2', systemPrompt, stream = false } = await request.json() as ApiRequest;
 
   if (!message) {
     return new HttpResponse(JSON.stringify({ error: '消息内容不能为空' }), {

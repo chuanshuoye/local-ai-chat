@@ -4,6 +4,8 @@ import { cloneDeep } from 'lodash';
 import { FlowNodeData } from './flow-store';
 import { FormField, FormConfig, nodeFormConfigs, getFormConfigForNodeType } from './models/config-model';
 
+export type { FormField, FormConfig };
+
 // 存储类型
 interface NodeState {
   isDrawerOpen: boolean;

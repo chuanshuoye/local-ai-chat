@@ -78,7 +78,7 @@ export enum STORAGE_KEYS {
 
 // API 路径
 export const API_PATHS = {
-  OLLAMA: '/api/ai/ollama',
+  OLLAMA: '/api/chat',
   MCP: '/api/mcp'
 };
 

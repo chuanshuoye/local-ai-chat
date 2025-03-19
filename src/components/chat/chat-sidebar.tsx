@@ -447,6 +447,7 @@ export function ChatSidebar() {
 
                 <div className="pt-3 border-t border-gray-700">
                   <button 
+                    onClick={() => navigate('/agents')}
                     className="flex items-center text-sm text-gray-300 hover:text-white"
                   >
                     <svg 
@@ -461,7 +462,7 @@ export function ChatSidebar() {
                         clipRule="evenodd" 
                       />
                     </svg>
-                    返回首页
+                    配置中心
                   </button>
                 </div>
               </div>

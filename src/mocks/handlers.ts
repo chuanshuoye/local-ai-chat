@@ -1,4 +1,7 @@
 import { http } from 'msw';
+import {
+  handleOllamaRequest
+} from './ai/ollama';
 import { 
   handleGetAgents, 
   handleCreateAgent, 
@@ -23,6 +26,8 @@ import {
 } from './ai/mcp';
 
 export const handlers = [
+  // chat ollama API
+  http.post('/api/chat', handleOllamaRequest),
   // Agents API
   http.get('/api/agents', handleGetAgents),
   http.post('/api/agents', handleCreateAgent),

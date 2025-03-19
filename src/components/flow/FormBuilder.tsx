@@ -48,7 +48,7 @@ export function FormBuilder({ config, data, onChange }: FormBuilderProps) {
             required={field.required}
           >
             <option value="">请选择</option>
-            {field.options?.map(option => (
+            {field.options?.map((option: { label: string; value: string }) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
@@ -99,7 +99,7 @@ export function FormBuilder({ config, data, onChange }: FormBuilderProps) {
   
   return (
     <div className="space-y-4">
-      {config.fields.map((field) => (
+      {config.fields.map((field: FormField) => (
         <div key={field.id} className="space-y-2">
           <label htmlFor={field.id} className="block text-sm font-medium text-gray-700">
             {field.label}

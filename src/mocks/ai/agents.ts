@@ -1,7 +1,17 @@
 import { HttpResponse, http, type HttpRequestHandler, HttpResponseResolver } from 'msw';
 
+interface Agent {
+  id: string;
+  name: string;
+  type: string;
+  description: string;
+  icon: string;
+  prompt: string;
+  createdAt: number;
+}
+
 // 预设的 Agent 数据
-const mockAgents = [
+const mockAgents: Agent[] = [
   {
     id: 'agent-1',
     name: '通用助手',
@@ -62,13 +72,13 @@ export const handleGetAgents: HttpResponseResolver = async () => {
 
 // POST /api/agents - 创建新 agent
 export const handleCreateAgent: HttpResponseResolver = async ({ request }) => {
-  const data = await request.json();
+  const data = await request.json() as Partial<Agent>;
   
   // 模拟网络延迟
   await new Promise(resolve => setTimeout(resolve, 500));
   
   // 创建新的 agent
-  const newAgent = {
+  const newAgent: Agent = {
     id: `agent-${Date.now()}`,
     name: data.name || '未命名助手',
     type: data.type || 'custom',
@@ -109,7 +119,7 @@ export const handleGetAgent: HttpResponseResolver = async ({ params }) => {
 
 // PUT /api/agents/:id - 更新 agent
 export const handleUpdateAgent: HttpResponseResolver = async ({ request, params }) => {
-  const data = await request.json();
+  const data = await request.json() as Partial<Agent>;
   
   // 模拟网络延迟
   await new Promise(resolve => setTimeout(resolve, 300));
