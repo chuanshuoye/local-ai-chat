@@ -5,9 +5,11 @@ import { MainLayout } from '@/components/layout/MainLayout';
 import { AgentCard } from '@/components/agent/AgentCard';
 import { Button } from '@/components/ui/button';
 import { Agent, useAgentStore } from '@/store/agent-store';
+import { useRouter } from 'next/navigation';
 
 export default function AgentsPage() {
   const { agents, fetchAgents, removeAgent, isLoading, error } = useAgentStore();
+  const router = useRouter();
 
   useEffect(() => {
     fetchAgents();
@@ -17,6 +19,17 @@ export default function AgentsPage() {
   const handleDelete = (agentOrId: string | Agent) => {
     const id = typeof agentOrId === 'string' ? agentOrId : agentOrId.id;
     removeAgent(id);
+  };
+  
+  // 处理编辑 Agent
+  const handleEdit = (agent: Agent) => {
+    router.push(`/agents/${agent.id}`);
+  };
+  
+  // 处理工作流
+  const handleWorkflow = (agent: Agent) => {
+    // 如果 Agent 有工作流，导航到工作流编辑页面
+    router.push(`/workflow?agent=${agent.id}`);
   };
 
   return (
@@ -46,8 +59,9 @@ export default function AgentsPage() {
             <AgentCard
               key={agent.id}
               agent={agent}
-              onEdit={(agent) => console.log('编辑', agent)}
+              onEdit={handleEdit}
               onDelete={handleDelete}
+              onWorkflow={handleWorkflow}
             />
           ))}
         </div>

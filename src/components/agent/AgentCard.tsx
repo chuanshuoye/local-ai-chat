@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import type { Agent } from '@/store/agent-store';
+import { useRouter } from 'next/navigation';
+import { useWorkflowStore } from '@/store/workflow-store';
 
 interface AgentCardProps {
   agent: Agent;
@@ -12,6 +14,37 @@ interface AgentCardProps {
 }
 
 export function AgentCard({ agent, onEdit, onDelete, onWorkflow }: AgentCardProps) {
+  const router = useRouter();
+  const { workflows } = useWorkflowStore();
+  const [agentWorkflow, setAgentWorkflow] = useState<{ name: string } | null>(null);
+  
+  // 获取Agent关联的工作流信息
+  useEffect(() => {
+    if (agent.workflowId) {
+      const workflow = workflows.find(w => w.id === agent.workflowId);
+      if (workflow) {
+        setAgentWorkflow({
+          name: workflow.name
+        });
+      }
+    } else {
+      setAgentWorkflow(null);
+    }
+  }, [agent.workflowId, workflows]);
+  
+  // 处理工作流按钮点击
+  const handleWorkflowClick = (e: React.MouseEvent, agent: Agent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (onWorkflow) {
+      onWorkflow(agent);
+    } else {
+      // 默认导航到工作流编辑页面
+      router.push(`/workflow?agent=${agent.id}`);
+    }
+  };
+  
   return (
     <Card className="transition-all duration-normal hover:shadow-md">
       <CardHeader>
@@ -38,28 +71,61 @@ export function AgentCard({ agent, onEdit, onDelete, onWorkflow }: AgentCardProp
             </svg>
             创建于: {new Date(agent.createdAt).toLocaleDateString()}
           </div>
-          {agent.workflow && (
+          {agentWorkflow && (
             <div className="flex items-center">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
-              工作流: {agent.workflow.name}
+              工作流: {agentWorkflow.name}
             </div>
           )}
         </div>
       </CardContent>
       <CardFooter className="justify-end space-x-2 border-t pt-4">
-        {agent.workflow && (
+        {agent.workflowId ? (
+          <>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={(e) => handleWorkflowClick(e, agent)}
+              className="text-primary-600 bg-primary-50 hover:bg-primary-100 border-none"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              查看工作流
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                router.push(`/workflow?agent=${agent.id}&readonly=false`);
+              }}
+              className="text-blue-600 bg-blue-50 hover:bg-blue-100 border-none"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              编辑工作流
+            </Button>
+          </>
+        ) : (
           <Button
             variant="secondary"
             size="sm"
-            onClick={() => onWorkflow?.(agent)}
-            className="text-primary-600 bg-primary-50 hover:bg-primary-100 border-none"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              router.push(`/workflow?agent=${agent.id}`);
+            }}
+            className="text-green-600 bg-green-50 hover:bg-green-100 border-none"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
-            工作流
+            创建工作流
           </Button>
         )}
         <Button

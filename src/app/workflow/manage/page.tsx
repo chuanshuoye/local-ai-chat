@@ -5,50 +5,66 @@ import { MainLayout } from '@/components/layout/MainLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useAgentStore } from '@/store/agent-store';
+import { useWorkflowStore } from '@/store/workflow-store';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import type { Workflow } from '@/store/workflow-store';
 
 export default function WorkflowManagePage() {
   const router = useRouter();
-  const { agents, fetchAgents, isLoading } = useAgentStore();
-  const [workflows, setWorkflows] = useState<Array<{
+  const { agents, fetchAgents } = useAgentStore();
+  const { workflows, fetchWorkflows, isLoading } = useWorkflowStore();
+  const [workflowsWithAgentInfo, setWorkflowsWithAgentInfo] = useState<Array<{
     id: string;
     name: string;
     description?: string;
-    agentName: string;
-    agentIcon: string;
+    agentName?: string;
+    agentIcon?: string;
     updatedAt: Date;
     nodeCount: number;
     edgeCount: number;
   }>>([]);
 
-  // 从agents中提取工作流信息
+  // 加载工作流数据和代理数据
   useEffect(() => {
-    const fetchWorkflowData = async () => {
-      await fetchAgents();
+    const loadData = async () => {
+      await Promise.all([fetchWorkflows(), fetchAgents()]);
       
-      const workflowData = agents
-        .filter(agent => agent.workflow)
-        .map(agent => ({
-          id: agent.id,
-          name: agent.workflow?.name || '未命名工作流',
-          description: agent.workflow?.description,
-          agentName: agent.name,
-          agentIcon: agent.icon,
-          updatedAt: new Date(agent.workflow?.updatedAt || Date.now()),
-          nodeCount: agent.workflow?.nodes.length || 0,
-          edgeCount: agent.workflow?.edges.length || 0,
-        }));
+      // 处理工作流数据，添加代理信息
+      const enrichedWorkflows = workflows.map(workflow => {
+        // 查找关联的代理（如果有）
+        let agentName: string | undefined;
+        let agentIcon: string | undefined;
+        
+        if (workflow.agentId) {
+          const agent = agents.find(a => a.id === workflow.agentId);
+          if (agent) {
+            agentName = agent.name;
+            agentIcon = agent.icon;
+          }
+        }
+        
+        return {
+          id: workflow.id,
+          name: workflow.name,
+          description: workflow.description,
+          agentName,
+          agentIcon,
+          updatedAt: new Date(workflow.updatedAt),
+          nodeCount: workflow.nodes.length,
+          edgeCount: workflow.edges.length,
+        };
+      });
       
-      setWorkflows(workflowData);
+      setWorkflowsWithAgentInfo(enrichedWorkflows);
     };
     
-    fetchWorkflowData();
-  }, [fetchAgents]);
+    loadData();
+  }, [fetchWorkflows, fetchAgents]);
 
   // 跳转到工作流编辑器
-  const handleEditWorkflow = (agentId: string) => {
-    router.push(`/workflow?load=${agentId}`);
+  const handleEditWorkflow = (workflowId: string) => {
+    router.push(`/workflow?id=${workflowId}`);
   };
   
   // 创建新工作流
@@ -58,7 +74,7 @@ export default function WorkflowManagePage() {
 
   return (
     <MainLayout>
-      <div className="space-y-6" style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold">工作流管理</h2>
           <Button onClick={handleCreateNew}>
@@ -73,7 +89,7 @@ export default function WorkflowManagePage() {
           <div className="flex items-center justify-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
           </div>
-        ) : workflows.length === 0 ? (
+        ) : workflowsWithAgentInfo.length === 0 ? (
           <Card>
             <CardContent className="flex flex-col items-center justify-center h-64 text-center p-6">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -91,17 +107,25 @@ export default function WorkflowManagePage() {
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {workflows.map(workflow => (
+            {workflowsWithAgentInfo.map(workflow => (
               <Card key={workflow.id} className="overflow-hidden hover:shadow-md transition-shadow">
                 <CardHeader className="bg-gray-50 border-b p-4">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-xl text-blue-600 mr-3">
-                        {workflow.agentIcon}
-                      </div>
+                      {workflow.agentIcon ? (
+                        <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-xl text-blue-600 mr-3">
+                          {workflow.agentIcon}
+                        </div>
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-xl text-gray-600 mr-3">
+                          🔄
+                        </div>
+                      )}
                       <div>
                         <CardTitle className="text-lg">{workflow.name}</CardTitle>
-                        <CardDescription className="mt-1">{workflow.agentName}</CardDescription>
+                        <CardDescription className="mt-1">
+                          {workflow.agentName ? `${workflow.agentName} 的工作流` : '通用工作流'}
+                        </CardDescription>
                       </div>
                     </div>
                   </div>

@@ -7,7 +7,7 @@ import { STORAGE_KEYS } from '@/constants';
 // 定义工作流节点数据类型
 export interface FlowNodeData {
   label: string;
-  type?: 'input' | 'output' | 'default' | 'agent' | 'multiagent' | 'custom';
+  type?: 'input' | 'output' | 'default' | 'agent' | 'custom';
   icon?: string;
   description?: string;
   [key: string]: any;
@@ -16,7 +16,7 @@ export interface FlowNodeData {
 // 定义节点模板类型
 export interface NodeTemplate {
   id: string;
-  type: 'input' | 'output' | 'default' | 'agent' | 'multiagent' | 'custom';
+  type: 'input' | 'output' | 'default' | 'agent' | 'custom';
   label: string;
   icon: string;
   description: string;
@@ -51,18 +51,6 @@ export const nodeTemplates: NodeTemplate[] = [
     nodeType: 'custom',
     data: {
       agentId: '',
-    }
-  },
-  {
-    id: 'multiagent',
-    type: 'multiagent',
-    label: '多Agent节点',
-    icon: '👥',
-    description: '多个AI助手协作处理任务',
-    nodeType: 'custom',
-    data: {
-      agentIds: [],
-      maxRounds: 3,
     }
   },
   {

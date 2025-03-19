@@ -24,7 +24,6 @@ export interface ChatSession {
   updatedAt: Date;
   messages: Message[];
   assistantId?: string; // 关联的助手ID
-  metadata?: Record<string, any>;
 }
 
 // 替换预设助手列表
@@ -67,10 +66,6 @@ interface ChatState {
   
   // 设置模型和流式选项
   setModelSettings: (model: string, streaming: boolean) => void;
-  
-  // 新增多Agent会话相关方法
-  createMultiAgentSession: (agentIds: string[]) => string;
-  handleMultiAgentChat: (sessionId: string, userMessage: string) => Promise<void>;
 }
 
 // 创建存储
@@ -248,126 +243,6 @@ export const useChatStore = create<ChatState>()(
       // 设置模型和流式选项
       setModelSettings: (model: string, streaming: boolean) => {
         set({ selectedModel: model, streamingEnabled: streaming });
-      },
-      
-      // 创建多Agent会话
-      createMultiAgentSession: (agentIds) => {
-        const id = Date.now().toString();
-        const assistants = agentIds.map(aid => get().getAssistant(aid)).filter(Boolean);
-        
-        if (assistants.length === 0) {
-          throw new Error('未找到选择的任何Agent');
-        }
-        
-        const assistantNames = assistants.map(a => a?.name).join('、');
-        const welcomeMessage: Message = {
-          id: 'welcome',
-          role: 'assistant' as MessageRole,
-          content: `你好！我是由${assistantNames}组成的协作助手团队。有什么问题需要我们帮助吗？`,
-          timestamp: new Date(),
-          metadata: { 
-            model: 'multi-agent', 
-            agentIds: agentIds 
-          }
-        };
-        
-        const newSession: ChatSession = {
-          id,
-          title: `多Agent协作对话`,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          messages: [welcomeMessage],
-          // 使用metadata存储多个agentId
-          metadata: { multiAgents: agentIds }
-        };
-        
-        set(state => {
-          state.sessions.unshift(newSession);
-          state.currentSessionId = id;
-        });
-        
-        return id;
-      },
-      
-      // 处理多Agent聊天
-      handleMultiAgentChat: async (sessionId, userMessage) => {
-        const session = get().getSession(sessionId);
-        if (!session || !session.metadata?.multiAgents) {
-          throw new Error('无效的多Agent会话');
-        }
-        
-        const agentIds = session.metadata.multiAgents as string[];
-        const agents = agentIds.map(id => get().getAssistant(id)).filter(Boolean);
-        
-        // 添加用户消息
-        const userMessageObj: Message = {
-          id: Date.now().toString(),
-          role: 'user' as MessageRole,
-          content: userMessage,
-          timestamp: new Date()
-        };
-        get().addMessage(sessionId, userMessageObj);
-        
-        // 创建加载中消息
-        const loadingMessageId = `loading-${Date.now()}`;
-        const loadingMessage: Message = {
-          id: loadingMessageId,
-          role: 'assistant' as MessageRole,
-          content: '思考中...',
-          timestamp: new Date(),
-          metadata: { 
-            isLoading: true,
-            model: 'multi-agent',
-            agentIds: agentIds
-          }
-        };
-        get().addMessage(sessionId, loadingMessage);
-        
-        try {
-          // 这里可以实现复杂的多Agent协作逻辑
-          // 1. 可以让每个Agent单独响应，然后合并
-          // 2. 可以实现Agent间的对话
-          // 3. 可以实现专家轮询等
-          
-          // 示例实现：让每个Agent生成回复，然后合并
-          const responses = await Promise.all(agents.map(async (agent) => {
-            if (!agent) return null;
-            
-            // 调用API获取回复，这里用模拟实现
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            return {
-              agentName: agent.name,
-              content: `作为${agent.name}，我的回答是：${userMessage.length > 10 ? userMessage.substring(0, 10) + '...' : userMessage}问题已收到。这是我的专业领域响应。`
-            };
-          }));
-          
-          // 合并多个Agent的回复
-          const combinedResponse = responses
-            .filter(Boolean)
-            .map(r => `**${r?.agentName}**: ${r?.content}`)
-            .join('\n\n');
-          
-          // 更新消息
-          get().updateMessage(
-            sessionId, 
-            loadingMessageId, 
-            combinedResponse,
-            { 
-              isLoading: false,
-              model: 'multi-agent',
-              agentIds: agentIds
-            }
-          );
-          
-        } catch (error) {
-          // 处理错误
-          get().updateMessage(
-            sessionId,
-            loadingMessageId,
-            '处理过程中出错: ' + (error instanceof Error ? error.message : '未知错误'),
-            { isLoading: false, error: true }
-          );
-        }
       }
     })),
     {

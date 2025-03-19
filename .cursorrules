@@ -2,10 +2,10 @@
 
 # Next.js (React, Tailwind)
 
-# Next.js with React, Tailwind CSS, and Shadcn UI
+# Next.js with React, Tailwind CSS, and radix-ui（not lucide-react）
 
 ## Introduction
-This document outlines the best practices and coding standards for developing web applications using Next.js, React, Tailwind CSS, and Shadcn UI. The focus is on writing clean, maintainable, and performant code.
+This document outlines the best practices and coding standards for developing web applications using Next.js, React, Tailwind CSS, and radix-ui. The focus is on writing clean, maintainable, and performant code.
 
 ## Code Style and Structure
 - **TypeScript**: Use TypeScript for all code. Prefer interfaces over types and avoid enums; use maps instead.
@@ -20,7 +20,7 @@ This document outlines the best practices and coding standards for developing we
 - **Exports**: Favor named exports for components.
 
 ## UI and Styling
-- **Shadcn UI and Tailwind CSS**: Use Shadcn UI for components and Tailwind CSS for styling.
+- **radix-ui and Tailwind CSS**: Use radix-ui for components and Tailwind CSS for styling.
 - **Responsive Design**: Implement responsive design with a mobile-first approach using Tailwind CSS.
 
 ## Performance Optimization

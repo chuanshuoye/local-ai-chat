@@ -8,13 +8,22 @@ export const AI_MODELS = [
   { id: 'deepseek-coder-v2', name: 'deepseek-coder-v2', description: 'deepseek高效开源语言模型' },
   { id: 'deepseek-r1:8b', name: 'deepseek-r1:8b', description: '高效开源语言模型' },
   { id: 'deepseek-r1:14b', name: 'deepseek-r1:14b', description: 'Deepseek开源模型' },
-
 ];
 
-
+// MCP服务定义
+export const MCP_SERVICES = [
+  { id: 'mcp-1', name: '文本分析', description: '提供文本分析、分类和情感分析服务', icon: '📊' },
+  { id: 'mcp-2', name: '代码生成', description: '提供代码生成和代码转换服务', icon: '💻' },
+  { id: 'mcp-3', name: '图像识别', description: '提供图像识别和分类服务', icon: '🖼️' },
+  { id: 'mcp-4', name: '自然语言理解', description: '提供语义理解和实体识别服务', icon: '🔍' },
+  { id: 'mcp-5', name: '知识图谱', description: '提供知识图谱构建和查询服务', icon: '🌐' },
+];
 
 // 默认模型ID
 export const DEFAULT_MODEL_ID = 'llama3.2';
+
+// 默认MCP服务ID
+export const DEFAULT_MCP_SERVICE_ID = 'mcp-1';
 
 // 助手类型定义
 export const ASSISTANT_TYPES = [
@@ -56,18 +65,21 @@ export const ASSISTANT_TYPES = [
 ];
 
 // 可用的表情图标列表
-export const AVAILABLE_ICONS = ['🤖', '👨‍💻', '✍️', '🧮', '🧳', '🎨', '🎓', '📊', '🔍', '💼', '🏥', '🍳', '🎮'];
+export const AVAILABLE_ICONS = ['🤖', '👨‍💻', '✍️', '🧮', '🧳', '🎨', '🎓', '📊', '🔍', '💼', '🏥', '🍳', '🎮', '📝', '🖼️', '🌐', '💻'];
 
 // 本地存储键名
 export enum STORAGE_KEYS {
   CHAT = 'chat-storage',
   FLOW = 'flow-storage',
-  AGENT = 'agent-storage'
+  AGENT = 'agent-storage',
+  WORKFLOW = 'workflow-storage',
+  MCP = 'mcp-storage'
 }
 
 // API 路径
 export const API_PATHS = {
-  OLLAMA: '/api/ai/ollama'
+  OLLAMA: '/api/ai/ollama',
+  MCP: '/api/mcp'
 };
 
 // 消息角色

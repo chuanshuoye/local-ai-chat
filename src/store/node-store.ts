@@ -54,7 +54,11 @@ export const useNodeStore = create<NodeState>()(
           if (temperatureField) {
             temperatureField.min = 0;
             temperatureField.max = 1;
-            temperatureField.step = 0.1;
+            if ('step' in temperatureField) {
+              temperatureField.step = 0.1;
+            } else {
+              (temperatureField as any).step = 0.1;
+            }
           }
           
           // 设置系统提示词字段
@@ -69,18 +73,6 @@ export const useNodeStore = create<NodeState>()(
             maxTokensField.min = 100;
             maxTokensField.max = 4000;
             maxTokensField.defaultValue = 1000;
-          }
-        }
-        
-        // 如果是多Agent类型，同样需要填充选项
-        if (nodeType === 'multiagent' as string) {
-          const { agents } = require('./agent-store').useAgentStore.getState();
-          const agentIdsField = formConfig.fields.find((f: FormField) => f.id === 'agentIds');
-          if (agentIdsField && agents) {
-            agentIdsField.options = agents.map((a: any) => ({
-              label: a.name,
-              value: a.id
-            }));
           }
         }
         

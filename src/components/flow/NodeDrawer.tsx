@@ -1,11 +1,7 @@
 import React from 'react';
 import { useNodeStore } from '@/store/node-store';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MultiSelect } from '@/components/ui/multiselect';
+import { FormBuilder } from './FormBuilder';
 
 export function NodeDrawer() {
   const { 
@@ -17,94 +13,6 @@ export function NodeDrawer() {
     updateFormData,
     applyChanges
   } = useNodeStore();
-
-  // 处理字段变更
-  const handleFieldChange = (fieldId: string, value: any) => {
-    updateFormData(fieldId, value);
-  };
-
-  // 渲染表单字段
-  const renderField = (field: any) => {
-    switch (field.type) {
-      case 'text':
-        return (
-          <Input
-            id={field.id}
-            value={formData[field.id] || ''}
-            onChange={(e) => handleFieldChange(field.id, e.target.value)}
-            placeholder={field.placeholder}
-            required={field.required}
-          />
-        );
-      
-      case 'textarea':
-        return (
-          <Textarea
-            id={field.id}
-            value={formData[field.id] || ''}
-            onChange={(e) => handleFieldChange(field.id, e.target.value)}
-            placeholder={field.placeholder}
-            required={field.required}
-            rows={4}
-          />
-        );
-      
-      case 'select':
-        return (
-          <Select
-            value={formData[field.id] || ''}
-            onValueChange={(value) => handleFieldChange(field.id, value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder={field.placeholder} />
-            </SelectTrigger>
-            <SelectContent>
-              {field.options?.map((option: any) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        );
-      
-      case 'multiselect':
-        return (
-          <MultiSelect
-            options={field.options || []}
-            value={formData[field.id] || []}
-            onChange={(value) => handleFieldChange(field.id, value)}
-            placeholder={field.placeholder}
-          />
-        );
-      
-      case 'checkbox':
-        return (
-          <Checkbox
-            id={field.id}
-            checked={!!formData[field.id]}
-            onCheckedChange={(checked) => handleFieldChange(field.id, checked)}
-          />
-        );
-      
-      case 'number':
-        return (
-          <Input
-            id={field.id}
-            type="number"
-            value={formData[field.id] || field.defaultValue || ''}
-            onChange={(e) => handleFieldChange(field.id, Number(e.target.value))}
-            min={field.min}
-            max={field.max}
-            step={field.step}
-            required={field.required}
-          />
-        );
-      
-      default:
-        return null;
-    }
-  };
 
   if (!isDrawerOpen || !formConfig) {
     return null;
@@ -132,20 +40,11 @@ export function NodeDrawer() {
       </div>
 
       <div className="flex-1 overflow-y-auto p-4">
-        <form className="space-y-4">
-          {formConfig.fields.map((field) => (
-            <div key={field.id} className="space-y-2">
-              <label htmlFor={field.id} className="block text-sm font-medium text-gray-700">
-                {field.label}
-                {field.required && <span className="text-red-500 ml-1">*</span>}
-              </label>
-              {renderField(field)}
-              {field.helpText && (
-                <p className="text-xs text-gray-500">{field.helpText}</p>
-              )}
-            </div>
-          ))}
-        </form>
+        <FormBuilder 
+          config={formConfig} 
+          data={formData} 
+          onChange={updateFormData} 
+        />
       </div>
 
       <div className="p-4 border-t border-gray-200 flex justify-end space-x-2 bg-gray-50">

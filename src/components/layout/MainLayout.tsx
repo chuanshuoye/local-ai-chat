@@ -15,6 +15,7 @@ const navItems: NavItem[] = [
   { key: 'agents', label: 'Agent管理', icon: '🤖', path: '/agents' },
   { key: 'workflow', label: '工作流编辑', icon: '⚙️', path: '/workflow' },
   { key: 'workflow-manage', label: '工作流管理', icon: '📋', path: '/workflow/manage' },
+  { key: 'mcp-manage', label: 'MCP服务管理', icon: '💁', path: '/mcp' },
 ];
 
 export function MainLayout({ children }: { children: React.ReactNode }) {
