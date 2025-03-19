@@ -13,7 +13,8 @@ interface NavItem {
 const navItems: NavItem[] = [
   { key: 'chat', label: '对话', icon: '💬', path: '/chat' },
   { key: 'agents', label: 'Agent管理', icon: '🤖', path: '/agents' },
-  { key: 'workflow', label: '工作流配置', icon: '⚙️', path: '/workflow' },
+  { key: 'workflow', label: '工作流编辑', icon: '⚙️', path: '/workflow' },
+  { key: 'workflow-manage', label: '工作流管理', icon: '📋', path: '/workflow/manage' },
 ];
 
 export function MainLayout({ children }: { children: React.ReactNode }) {

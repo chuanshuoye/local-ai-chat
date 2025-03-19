@@ -60,6 +60,12 @@ export default function Home() {
           >
             管理 Agents
           </Link>
+          <Link
+            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800 transition-colors flex items-center justify-center hover:bg-blue-100 dark:hover:bg-blue-900 hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto"
+            href="/workflow/manage"
+          >
+            工作流管理
+          </Link>
         </div>
       </main>
       <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">

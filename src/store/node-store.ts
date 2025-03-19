@@ -72,6 +72,18 @@ export const useNodeStore = create<NodeState>()(
           }
         }
         
+        // 如果是多Agent类型，同样需要填充选项
+        if (nodeType === 'multiagent' as string) {
+          const { agents } = require('./agent-store').useAgentStore.getState();
+          const agentIdsField = formConfig.fields.find((f: FormField) => f.id === 'agentIds');
+          if (agentIdsField && agents) {
+            agentIdsField.options = agents.map((a: any) => ({
+              label: a.name,
+              value: a.id
+            }));
+          }
+        }
+        
         // 初始化表单数据
         const formData: Record<string, any> = {};
         formConfig.fields.forEach((field: FormField) => {

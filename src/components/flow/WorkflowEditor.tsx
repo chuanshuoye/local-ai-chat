@@ -103,7 +103,6 @@ export function WorkflowEditor() {
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const [workflowName, setWorkflowName] = useState('');
   const [workflowDescription, setWorkflowDescription] = useState('');
-  const [selectedAgentId, setSelectedAgentId] = useState<string>('');
   
   // 加载工作流对话框状态
   const [loadDialogOpen, setLoadDialogOpen] = useState(false);
@@ -120,18 +119,15 @@ export function WorkflowEditor() {
   
   // 处理保存工作流
   const handleSaveWorkflow = async () => {
-    if (!selectedAgentId) {
-      alert('请选择一个Agent');
-      return;
-    }
-    
     if (!workflowName) {
       alert('请输入工作流名称');
       return;
     }
     
     try {
-      await saveAgentWorkflow(selectedAgentId, workflowName, workflowDescription);
+      // 固定使用工作流助手ID
+      const workflowAgentId = 'agent-5'; // 工作流助手的ID
+      await saveAgentWorkflow(workflowAgentId, workflowName, workflowDescription);
       setSaveDialogOpen(false);
       alert('工作流保存成功');
     } catch (error) {
@@ -201,7 +197,8 @@ export function WorkflowEditor() {
               onConnect={onConnect}
               onNodeClick={handleNodeClick}
               nodeTypes={nodeTypes}
-              fitView
+              // fitView
+              defaultZoom={1}
               className="bg-slate-50"
               onEdgeClick={(_, edge) => {
                 if (window.confirm('确定要删除这条连接线吗？')) {
@@ -237,25 +234,6 @@ export function WorkflowEditor() {
                 </DialogTitle>
               </DialogHeader>
               <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="agent" className="text-sm font-medium">选择Agent</Label>
-                  <Select
-                    value={selectedAgentId}
-                    onValueChange={setSelectedAgentId}
-                  >
-                    <SelectTrigger className="w-full border-gray-300 focus:ring-blue-500 focus:border-blue-500">
-                      <SelectValue placeholder="选择一个Agent" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {agents.map(agent => (
-                        <SelectItem key={agent.id} value={agent.id} className="flex items-center">
-                          <span className="mr-2">{agent.icon}</span>
-                          {agent.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
                 <div className="space-y-2">
                   <Label htmlFor="name" className="text-sm font-medium">工作流名称</Label>
                   <Input

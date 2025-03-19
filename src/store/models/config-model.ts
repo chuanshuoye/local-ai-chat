@@ -1,7 +1,7 @@
 // 表单字段类型
 export interface FormField {
   id: string;
-  type: 'text' | 'textarea' | 'select' | 'checkbox' | 'number' | 'color';
+  type: 'text' | 'textarea' | 'select' | 'checkbox' | 'number' | 'color' | 'multiselect';
   label: string;
   placeholder?: string;
   required?: boolean;
@@ -11,6 +11,7 @@ export interface FormField {
   step?: number;
   helpText?: string;
   defaultValue?: any;
+  multiple?: boolean;
 }
 
 // 表单配置类型
@@ -155,6 +156,53 @@ export const nodeFormConfigs: Record<string, FormConfig> = {
         label: '节点名称',
         placeholder: '输入节点显示名称',
         required: true,
+      },
+    ],
+  },
+  multiagent: {
+    title: '多Agent对话节点',
+    description: '多个AI助手协作处理任务',
+    fields: [
+      {
+        id: 'label',
+        type: 'text',
+        label: '节点名称',
+        placeholder: '输入节点显示名称',
+        required: true,
+      },
+      {
+        id: 'agentIds',
+        type: 'multiselect',
+        label: '选择多个Agent',
+        placeholder: '选择多个协作Agent',
+        required: true,
+        multiple: true,
+        options: [], // 运行时动态填充
+      },
+      {
+        id: 'prompt',
+        type: 'textarea',
+        label: '系统指令',
+        placeholder: '输入系统指令，描述多个Agent的协作方式',
+      },
+      {
+        id: 'temperature',
+        type: 'number',
+        label: '温度',
+        min: 0,
+        max: 1,
+        step: 0.1,
+        defaultValue: 0.7,
+        helpText: '数值越高，回复越随机',
+      },
+      {
+        id: 'maxRounds',
+        type: 'number',
+        label: '最大对话轮次',
+        min: 1,
+        max: 10,
+        defaultValue: 3,
+        helpText: 'Agent之间的最大对话轮次',
       },
     ],
   },

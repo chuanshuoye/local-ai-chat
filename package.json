@@ -8,6 +8,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@radix-ui/react-checkbox": "^1.1.4",
     "@radix-ui/react-dialog": "^1.1.6",
     "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-popover": "^1.1.6",
@@ -17,6 +18,7 @@
     "@reactflow/controls": "^11.2.14",
     "@reactflow/core": "^11.11.4",
     "@reactflow/minimap": "^11.7.14",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "immer": "^10.1.1",
     "lodash": "^4.17.21",
