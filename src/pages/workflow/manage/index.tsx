@@ -8,6 +8,7 @@ import { useAgentStore } from '@/store/agent-store';
 import { useWorkflowStore } from '@/store/workflow-store';
 import { Link, useNavigate } from 'react-router-dom';
 import type { Workflow } from '@/store/workflow-store';
+import { exportToSpiffWorkflow } from '@/utils/spiffWorkflowExporter';
 
 export default function WorkflowManagePage() {
   const navigate = useNavigate();
@@ -69,6 +70,28 @@ export default function WorkflowManagePage() {
   // 创建新工作流
   const handleCreateNew = () => {
     navigate('/workflow');
+  };
+
+  // 导出工作流到SpiffWorkflow格式
+  const handleExportWorkflow = async (workflowId: string) => {
+    try {
+      // 从存储中获取工作流数据
+      const workflow = workflows.find(w => w.id === workflowId);
+      if (!workflow) {
+        throw new Error('找不到指定的工作流');
+      }
+      
+      // 调用导出工具函数
+      const success = await exportToSpiffWorkflow(workflow);
+      
+      if (success) {
+        console.log('工作流导出成功');
+      } else {
+        console.error('工作流导出失败');
+      }
+    } catch (error) {
+      console.error('导出工作流时发生错误:', error);
+    }
   };
 
   return (
@@ -161,6 +184,18 @@ export default function WorkflowManagePage() {
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
                       </svg>
                       运行
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => handleExportWorkflow(workflow.id)}
+                      title="导出为SpiffWorkflow格式"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+                      </svg>
+                      导出
                     </Button>
                   </div>
                 </CardContent>
