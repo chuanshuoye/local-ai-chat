@@ -37,7 +37,7 @@ export default function AgentsPage() {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold">Agent 管理</h2>
-          <Button>创建 Agent</Button>
+          <Button onClick={() => navigate('/agents/new')}>创建 Agent</Button>
         </div>
         
         {isLoading && <div className="text-center py-4">加载中...</div>}

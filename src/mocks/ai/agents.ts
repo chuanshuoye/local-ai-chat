@@ -8,6 +8,7 @@ interface Agent {
   icon: string;
   prompt: string;
   createdAt: number;
+  workflowId?: string;
 }
 
 // 预设的 Agent 数据
@@ -19,6 +20,7 @@ const mockAgents: Agent[] = [
     description: '可以回答各种问题的通用AI助手',
     icon: '🤖',
     prompt: '你是一个通用AI助手，可以回答用户提出的各种问题。请尽可能提供准确、有用的信息。',
+    workflowId: 'workflow-1',
     createdAt: Date.now() - 7 * 24 * 60 * 60 * 1000, // 一周前
   },
   {

@@ -10,6 +10,7 @@ import Agents from './pages/agents'
 import WorkflowManagePage from './pages/workflow/manage'
 import MCPCreate from './pages/mcp/create'
 import MCPEdit from './pages/mcp/edit/[id]'
+import AgentCreate from './pages/agents/[id]'
 
 function App() {
     return (
@@ -21,6 +22,7 @@ function App() {
                     <Route path="/chat" element={<ChatPage />} />
                     <Route path="/chat/:id" element={<ChatSession />} />
                     <Route path="/agents" element={<Agents />} />
+                    <Route path="/agents/:id" element={<AgentCreate />} />
                     <Route path="/workflow" element={<Workflow />} />
                     <Route path="/workflow/manage" element={<WorkflowManagePage />} />
                     <Route path="/mcp" element={<MCP />} />

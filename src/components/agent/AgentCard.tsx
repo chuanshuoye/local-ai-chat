@@ -59,7 +59,7 @@ export function AgentCard({ agent, onEdit, onDelete, onWorkflow }: AgentCardProp
   };
   
   return (
-    <Card className="transition-all duration-normal hover:shadow-md">
+    <Card className="transition-all duration-normal hover:shadow-md relative min-h-[320px]">
       <CardHeader>
         <div className="flex items-center space-x-3">
           <div className="w-12 h-12 rounded-full bg-primary-50 flex items-center justify-center text-2xl text-primary-600">
@@ -94,7 +94,7 @@ export function AgentCard({ agent, onEdit, onDelete, onWorkflow }: AgentCardProp
           )}
         </div>
       </CardContent>
-      <CardFooter className="justify-end space-x-2 border-t pt-4">
+      <CardFooter className="justify-end space-x-2 border-t pt-4 h-16 absolute bottom-0 left-0 right-0 bg-white">
         {agent.workflowId ? (
           <>
             <Button
