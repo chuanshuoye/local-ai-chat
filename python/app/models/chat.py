@@ -1,4 +1,4 @@
-from typing import List, Optional, Dict, Any, Union
+from typing import List, Optional, Dict, Any, Union, Literal
 from pydantic import BaseModel, Field
 
 class Message(BaseModel):
@@ -8,6 +8,7 @@ class Message(BaseModel):
 class ChatRequest(BaseModel):
     messages: List[Message]
     model: Optional[str] = None
+    provider: Optional[Literal["openai", "ollama"]] = None
     temperature: Optional[float] = 0.7
     top_p: Optional[float] = 1.0
     max_tokens: Optional[int] = None

@@ -12,6 +12,7 @@ interface ChatMessage {
 
 // 定义请求体类型
 interface OllamaRequestBody {
+  provider: string;
   model: string;
   prompt: string;
   stream?: boolean;
@@ -65,6 +66,7 @@ export const handleOllamaRequest: HttpResponseResolver = async ({ request }) => 
     model: model,
     prompt: contextPrompt,
     stream: stream,
+    provider: 'ollama',
     options: {
       temperature: 0.7,
       top_p: 0.9,

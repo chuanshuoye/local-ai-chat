@@ -52,4 +52,14 @@ class OpenAIService:
             return response.dict()
             
         except Exception as e:
+            raise e
+
+    async def list_models(self) -> List[str]:
+        """
+        获取可用的模型列表
+        """
+        try:
+            response = self.client.models.list()
+            return [model.id for model in response.data if model.id.startswith(("gpt-", "text-"))]
+        except Exception as e:
             raise e 
