@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useMCPStore } from '@/store/mcp-store';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,6 +7,7 @@ import { MainLayout } from '@/components/layout/MainLayout';
 
 // MCP服务管理页面
 export default function MCPManagePage() {
+  const navigate = useNavigate();
   const { services, fetchServices, selectService, removeService } = useMCPStore();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -30,7 +32,7 @@ export default function MCPManagePage() {
             <p className="text-gray-500 mt-2">管理您的MCP服务配置</p>
           </div>
           <Button 
-            onClick={() => window.location.href = '/mcp/create'}
+            onClick={() => navigate('/mcp/create')}
             className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md shadow-sm transition-all duration-200 flex items-center space-x-2"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -55,7 +57,7 @@ export default function MCPManagePage() {
                     key={service.id}
                     service={service}
                     onSelect={() => selectService(service.id)}
-                    onEdit={() => window.location.href = `/mcp/edit/${service.id}`}
+                    onEdit={() => navigate(`/mcp/edit/${service.id}`)}
                     onDelete={() => { }} // 系统服务不能删除
                     isSystem
                   />
@@ -73,7 +75,7 @@ export default function MCPManagePage() {
                       key={service.id}
                       service={service}
                       onSelect={() => selectService(service.id)}
-                      onEdit={() => window.location.href = `/mcp/edit/${service.id}`}
+                      onEdit={() => navigate(`/mcp/edit/${service.id}`)}
                       onDelete={() => {
                         if (confirm(`确定要删除服务"${service.name}"吗？`)) {
                           removeService(service.id);
@@ -87,7 +89,7 @@ export default function MCPManagePage() {
                     <Button
                       variant="outline"
                       className="mt-4"
-                      onClick={() => window.location.href = '/mcp/create'}
+                      onClick={() => navigate('/mcp/create')}
                     >
                       创建服务
                     </Button>

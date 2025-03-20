@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useMCPStore } from '@/store/mcp-store';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,8 +12,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 export default function EditMCPPage() {
   const navigate = useNavigate();
   const { getService, updateService } = useMCPStore();
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get('id');
+  const { id } = useParams();
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -47,7 +46,7 @@ export default function EditMCPPage() {
       endpoint: service.endpoint || '',
       apiKey: service.apiKey || '',
     });
-  }, [getService, navigate]);
+  }, [getService, navigate, id]);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;

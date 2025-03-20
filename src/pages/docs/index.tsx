@@ -2,7 +2,7 @@ import { DocHeader } from '@/components/doc/doc-header';
 import { CodeBlock } from '@/components/doc/code-block';
 import HomeLayout from './layout';
 
-export default function HomePage() {
+export default function DocPage() {
   return (
     <HomeLayout>
       <div className="space-y-8 p-20">

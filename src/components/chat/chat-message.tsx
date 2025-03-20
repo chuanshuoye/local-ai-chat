@@ -44,45 +44,81 @@ export function ChatMessage({ message }: ChatMessageProps) {
       setParsedContent('');
       return;
     }
-    
-    try {
-      // 尝试解析整个内容为 JSON
-      const jsonContent = JSON.parse(message.content);
-      if (jsonContent.response) {
-        setParsedContent(jsonContent.response);
-      } else {
-        setParsedContent(message.content);
-      }
-    } catch (e) {
-      // 如果不是有效的 JSON，尝试解析每一行
+
+    // 清理消息内容的函数
+    const cleanMessageContent = (content: string) => {
+      // 移除console.log语句
+      content = content.replace(/console\.log\(.*?\);?\s*(?:\/\/.*?)?/g, '');
+      
+      // 移除模型响应JSON对象
+      content = content.replace(/({"model":"[\w\d\.]+","created_at":".*?","response":".*?","done":.*?,"done_reason":".*?","context":\[.*?\],"total_duration":.*})/g, '');
+      
+      // 移除数字序列
+      content = content.replace(/(\d+,)+\d+(\[\w+":".*?\}\])?$/g, '');
+      
+      return content.trim();
+    };
+
+    // 处理单行JSON响应的函数
+    const processJsonLine = (line: string): string => {
       try {
-        const lines = message.content.split('\n').filter(line => line.trim());
-        let extractedContent = '';
-        
-        for (const line of lines) {
-          try {
-            const jsonLine = JSON.parse(line);
-            if (jsonLine.response) {
-              extractedContent += jsonLine.response;
-            } else if (jsonLine.chunk) {
-              extractedContent += jsonLine.chunk;
-            }
-          } catch {
-            // 如果这一行不是 JSON，直接添加
-            extractedContent += line + '\n';
-          }
+        const jsonLine = JSON.parse(line);
+        if (jsonLine.response) {
+          return jsonLine.response;
+        } else if (jsonLine.chunk) {
+          return jsonLine.chunk;
         }
-        
-        if (extractedContent) {
-          setParsedContent(extractedContent);
-        } else {
-          setParsedContent(message.content);
+        return '';
+      } catch {
+        return '';
+      }
+    };
+
+    // 处理流式消息的主函数
+    const processStreamMessage = (content: string): string => {
+      // 首先清理内容
+      const cleanedContent = cleanMessageContent(content);
+      
+      // 尝试解析整个内容为JSON
+      try {
+        const jsonContent = JSON.parse(cleanedContent);
+        if (jsonContent.response) {
+          return jsonContent.response;
         }
       } catch {
-        // 如果所有解析尝试都失败，使用原始内容
-        setParsedContent(message.content);
+        // 如果不是有效的JSON，继续处理
       }
-    }
+
+      // 分行处理
+      const lines = cleanedContent.split('\n').filter(line => line.trim());
+      let extractedContent = '';
+      
+      // 处理每一行
+      for (const line of lines) {
+        // 跳过空行和已处理过的行
+        if (!line.trim() || line.includes('"done":true') || line.includes("'done':true")) {
+          continue;
+        }
+
+        // 尝试处理JSON行
+        const jsonContent = processJsonLine(line);
+        if (jsonContent) {
+          extractedContent += jsonContent;
+          continue;
+        }
+
+        // 如果不是JSON，直接添加非空行
+        if (line.trim()) {
+          extractedContent += line + '\n';
+        }
+      }
+
+      return extractedContent.trim() || cleanedContent;
+    };
+
+    // 处理消息并更新状态
+    const processedContent = processStreamMessage(message.content);
+    setParsedContent(processedContent);
   }, [message.content]);
   
   // 当流式内容更新时，滚动到最新内容

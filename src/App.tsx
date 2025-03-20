@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { HashRouter, Routes, Route } from 'react-router-dom'
 import { ThemeProvider } from '@/components/theme-provider'
 import Home from './pages/home'
 import ChatPage from './pages/chat'
@@ -13,7 +13,7 @@ import MCPEdit from './pages/mcp/edit/[id]'
 
 function App() {
     return (
-        <BrowserRouter>
+        <HashRouter>
             <ThemeProvider defaultTheme="system" enableSystem disableTransitionOnChange>
                 <Routes>
                     <Route path="/" element={<Home />} />
@@ -28,7 +28,7 @@ function App() {
                     <Route path="/mcp/edit/:id" element={<MCPEdit />} />
                 </Routes>
             </ThemeProvider>
-        </BrowserRouter>
+        </HashRouter>
     )
 }
 
