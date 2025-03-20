@@ -1,5 +1,7 @@
 # Local AI Chat
 
+> 完全基于cursor IDE PRO + claude-3.7-sonnet大模型开发，开启AI编程零代码模式～～
+
 这是一个使用 [Vite](https://vitejs.dev/) + [React](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/) 构建的项目，结合了 [Tailwind CSS](https://tailwindcss.com/) 和 [Radix UI](https://www.radix-ui.com/) 组件库。
 
 ![](assets/1742445165345.jpg)
