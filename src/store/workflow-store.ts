@@ -48,7 +48,7 @@ interface WorkflowState {
 
 export const useWorkflowStore = create<WorkflowState>()(
   persist(
-    immer((set, get) => ({
+    immer<WorkflowState>((set, get) => ({
       workflows: [],
       selectedWorkflowId: null,
       isLoading: false,
