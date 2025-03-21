@@ -192,6 +192,23 @@ export default function ChatSessionPage() {
     }
   };
 
+  const handleImageUpload = (imageBase64: string) => {
+    // 创建带附件的用户消息
+    const userMessage: Message = {
+      id: `user-${Date.now()}`,
+      role: 'user' as MessageRole,
+      content: `选择的图片: \n`,
+      timestamp: new Date(),
+      attachment: {
+        type: 'image/png',
+        name: 'image.png',
+        url: imageBase64,
+        size: imageBase64.length
+      }
+    };
+    addMessage(chatId, userMessage);
+  };
+
   // 获取当前助手信息
   const currentAssistant = session.assistantId ? getAssistant(session.assistantId) : undefined;
 
@@ -243,6 +260,7 @@ export default function ChatSessionPage() {
         <ChatInput
           onSendMessage={handleSendMessage}
           onFileUpload={handleFileUpload}
+          onImageUpload={handleImageUpload}
           isLoading={isLoading}
         />
       </div>

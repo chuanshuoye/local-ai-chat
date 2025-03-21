@@ -8,6 +8,7 @@ export const AI_MODELS = [
   { id: 'deepseek-coder-v2', name: 'deepseek-coder-v2', description: 'deepseek高效开源语言模型' },
   { id: 'deepseek-r1:8b', name: 'deepseek-r1:8b', description: '高效开源语言模型' },
   { id: 'deepseek-r1:14b', name: 'deepseek-r1:14b', description: 'Deepseek开源模型' },
+  { id: 'llava', name: 'llava', description: '多模态视觉-语言模型, 支持图像识别' },
 ];
 
 // MCP服务定义

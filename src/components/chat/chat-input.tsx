@@ -6,12 +6,14 @@ import { FileUploadDialog } from './file-upload-dialog';
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
   onFileUpload?: (file: File) => void;
+  onImageUpload?: (imageBase64: string) => void;
   isLoading?: boolean;
 }
 
-export function ChatInput({ onSendMessage, onFileUpload, isLoading = false }: ChatInputProps) {
+export function ChatInput({ onSendMessage, onFileUpload, onImageUpload, isLoading = false }: ChatInputProps) {
   const [message, setMessage] = useState('');
   const [showFileDialog, setShowFileDialog] = useState(false);
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -36,6 +38,26 @@ export function ChatInput({ onSendMessage, onFileUpload, isLoading = false }: Ch
     setShowFileDialog(false);
     if (file && onFileUpload) {
       onFileUpload(file);
+    }
+  };
+
+  const handleImageButtonClick = () => {
+    imageInputRef.current?.click();
+  };
+
+  const handleImageSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && onImageUpload) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        onImageUpload(base64String);
+      };
+      reader.readAsDataURL(file);
+      
+      if (imageInputRef.current) {
+        imageInputRef.current.value = '';
+      }
     }
   };
 
@@ -72,6 +94,33 @@ export function ChatInput({ onSendMessage, onFileUpload, isLoading = false }: Ch
                   />
                 </svg>
               </button>
+              
+              <button
+                type="button"
+                onClick={handleImageButtonClick}
+                className="rounded p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+              
+              <input
+                ref={imageInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageSelected}
+              />
             </div>
             <div className="flex-shrink-0 pointer-events-auto">
               <button

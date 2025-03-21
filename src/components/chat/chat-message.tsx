@@ -258,9 +258,10 @@ export function ChatMessage({ message }: ChatMessageProps) {
         </div>
       </div>
       {message.attachment && (
-        <div className="mt-3 border rounded-lg overflow-hidden">
+      <div className="flex items-start">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6">
           {message.attachment.type.startsWith('image/') ? (
-            <div className="relative">
+            <div className="relative rounded-lg overflow-hidden max-w-md my-2">
               <img 
                 src={message.attachment.url} 
                 alt={message.attachment.name}
@@ -317,6 +318,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
             </div>
           )}
         </div>
+      </div>
       )}
     </div>
   );
