@@ -47,6 +47,7 @@ interface ChatState {
   // 会话相关方法
   createSession: (title?: string, assistantId?: string) => string;
   deleteSession: (sessionId: string) => void;
+  clearAllSessions: () => void;
   setCurrentSession: (sessionId: string) => void;
   
   // 消息相关方法
@@ -75,7 +76,7 @@ interface ChatState {
 // 创建存储
 export const useChatStore = create<ChatState>()(
   persist(
-    immer((set, get) => ({
+    (set, get) => ({
       sessions: [],
       currentSessionId: null,
       assistants: [...defaultAssistants],
@@ -107,78 +108,139 @@ export const useChatStore = create<ChatState>()(
           assistantId
         };
         
-        set(state => {
-          state.sessions.unshift(newSession);
-          state.currentSessionId = id;
-        });
+        set((state) => ({
+          ...state,
+          sessions: [newSession, ...state.sessions],
+          currentSessionId: id
+        }));
         
         return id;
       },
       
       // 删除会话
       deleteSession: (sessionId) => {
-        set(state => {
+        set((state) => {
           const index = state.sessions.findIndex(s => s.id === sessionId);
           if (index !== -1) {
-            state.sessions.splice(index, 1);
+            const newSessions = [...state.sessions];
+            newSessions.splice(index, 1);
             
             // 如果删除的是当前会话，重置当前会话ID
-            if (state.currentSessionId === sessionId) {
-              state.currentSessionId = state.sessions.length > 0 ? state.sessions[0].id : null;
-            }
+            const newCurrentSessionId = 
+              state.currentSessionId === sessionId
+                ? (newSessions.length > 0 ? newSessions[0].id : null)
+                : state.currentSessionId;
+                
+            return {
+              ...state,
+              sessions: newSessions,
+              currentSessionId: newCurrentSessionId
+            };
           }
+          return state;
         });
+      },
+      
+      // 清除所有会话
+      clearAllSessions: () => {
+        set((state) => ({
+          ...state,
+          sessions: [],
+          currentSessionId: null
+        }));
       },
       
       // 设置当前会话
       setCurrentSession: (sessionId) => {
-        set({ currentSessionId: sessionId });
+        set((state) => ({ ...state, currentSessionId: sessionId }));
       },
       
       // 添加消息
       addMessage: (sessionId, message) => {
-        set(state => {
-          const session = state.sessions.find(s => s.id === sessionId);
-          if (session) {
-            session.messages.push(message);
+        set((state) => {
+          const sessionIndex = state.sessions.findIndex(s => s.id === sessionId);
+          if (sessionIndex !== -1) {
+            const newSessions = [...state.sessions];
+            const session = { ...newSessions[sessionIndex] };
+            
+            session.messages = [...session.messages, message];
             session.updatedAt = new Date();
             
             // 如果是用户消息，可以更新会话标题（取前20个字符）
             if (message.role === 'user' && session.title === '新对话' && message.content.trim()) {
               session.title = message.content.slice(0, 20) + (message.content.length > 20 ? '...' : '');
             }
+            
+            newSessions[sessionIndex] = session;
+            
+            return {
+              ...state,
+              sessions: newSessions
+            };
           }
+          return state;
         });
       },
       
       // 更新消息
       updateMessage: (sessionId, messageId, content, metadata) => {
-        set(state => {
-          const session = state.sessions.find(s => s.id === sessionId);
-          if (session) {
-            const message = session.messages.find(m => m.id === messageId);
-            if (message) {
+        set((state) => {
+          const sessionIndex = state.sessions.findIndex(s => s.id === sessionId);
+          if (sessionIndex !== -1) {
+            const newSessions = [...state.sessions];
+            const session = { ...newSessions[sessionIndex] };
+            const messageIndex = session.messages.findIndex(m => m.id === messageId);
+            
+            if (messageIndex !== -1) {
+              const newMessages = [...session.messages];
+              const message = { ...newMessages[messageIndex] };
+              
               message.content = content;
               if (metadata) {
                 message.metadata = { ...message.metadata, ...metadata };
               }
+              
+              newMessages[messageIndex] = message;
+              session.messages = newMessages;
               session.updatedAt = new Date();
+              
+              newSessions[sessionIndex] = session;
+              
+              return {
+                ...state,
+                sessions: newSessions
+              };
             }
           }
+          return state;
         });
       },
       
       // 删除消息
       deleteMessage: (sessionId, messageId) => {
-        set(state => {
-          const session = state.sessions.find(s => s.id === sessionId);
-          if (session) {
-            const index = session.messages.findIndex(m => m.id === messageId);
-            if (index !== -1) {
-              session.messages.splice(index, 1);
+        set((state) => {
+          const sessionIndex = state.sessions.findIndex(s => s.id === sessionId);
+          if (sessionIndex !== -1) {
+            const newSessions = [...state.sessions];
+            const session = { ...newSessions[sessionIndex] };
+            const messageIndex = session.messages.findIndex(m => m.id === messageId);
+            
+            if (messageIndex !== -1) {
+              const newMessages = [...session.messages];
+              newMessages.splice(messageIndex, 1);
+              
+              session.messages = newMessages;
               session.updatedAt = new Date();
+              
+              newSessions[sessionIndex] = session;
+              
+              return {
+                ...state,
+                sessions: newSessions
+              };
             }
           }
+          return state;
         });
       },
       
@@ -194,38 +256,57 @@ export const useChatStore = create<ChatState>()(
           updatedAt: now
         };
         
-        set(state => {
-          state.assistants.push(newAssistant);
-        });
+        set((state) => ({
+          ...state,
+          assistants: [...state.assistants, newAssistant]
+        }));
         
         return id;
       },
       
       // 更新助手
       updateAssistant: (assistantId, updates) => {
-        set(state => {
-          const assistant = state.assistants.find(a => a.id === assistantId);
-          if (assistant && !assistant.isSystem) {
+        set((state) => {
+          const assistantIndex = state.assistants.findIndex(a => a.id === assistantId);
+          if (assistantIndex !== -1 && !state.assistants[assistantIndex].isSystem) {
+            const newAssistants = [...state.assistants];
+            const assistant = { ...newAssistants[assistantIndex] };
+            
             Object.assign(assistant, updates, { updatedAt: new Date() });
+            newAssistants[assistantIndex] = assistant;
+            
+            return {
+              ...state,
+              assistants: newAssistants
+            };
           }
+          return state;
         });
       },
       
       // 删除助手
       deleteAssistant: (assistantId) => {
-        set(state => {
-          const index = state.assistants.findIndex(a => a.id === assistantId && !a.isSystem);
-          if (index !== -1) {
-            state.assistants.splice(index, 1);
+        set((state) => {
+          const assistantIndex = state.assistants.findIndex(a => a.id === assistantId && !a.isSystem);
+          if (assistantIndex !== -1) {
+            const newAssistants = [...state.assistants];
+            newAssistants.splice(assistantIndex, 1);
+            
+            return {
+              ...state,
+              assistants: newAssistants
+            };
           }
+          return state;
         });
       },
       
       // 切换助手面板显示状态
       toggleAssistantsPanel: () => {
-        set(state => {
-          state.showAssistantsPanel = !state.showAssistantsPanel;
-        });
+        set((state) => ({
+          ...state,
+          showAssistantsPanel: !state.showAssistantsPanel
+        }));
       },
       
       // 获取当前会话
@@ -246,20 +327,35 @@ export const useChatStore = create<ChatState>()(
       
       // 设置模型和流式选项
       setModelSettings: (model: string, streaming: boolean) => {
-        set({ selectedModel: model, streamingEnabled: streaming });
+        set((state) => ({
+          ...state,
+          selectedModel: model,
+          streamingEnabled: streaming
+        }));
       },
       
       // 更新会话上下文
       updateSessionContext: (sessionId, context) => {
-        set(state => {
-          const session = state.sessions.find(s => s.id === sessionId);
-          if (session) {
+        set((state) => {
+          const sessionIndex = state.sessions.findIndex(s => s.id === sessionId);
+          if (sessionIndex !== -1) {
+            const newSessions = [...state.sessions];
+            const session = { ...newSessions[sessionIndex] };
+            
             session.context = context;
             session.updatedAt = new Date();
+            
+            newSessions[sessionIndex] = session;
+            
+            return {
+              ...state,
+              sessions: newSessions
+            };
           }
+          return state;
         });
       }
-    })),
+    }),
     {
       name: STORAGE_KEYS.CHAT, // 使用常量
       storage: createJSONStorage(() => localStorage),
@@ -273,4 +369,4 @@ export const useChatStore = create<ChatState>()(
       }),
     }
   )
-); 
+);
