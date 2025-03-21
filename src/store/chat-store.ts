@@ -24,6 +24,7 @@ export interface ChatSession {
   updatedAt: Date;
   messages: Message[];
   assistantId?: string; // 关联的助手ID
+  context?: number[]; // 添加会话上下文
 }
 
 // 替换预设助手列表
@@ -52,6 +53,9 @@ interface ChatState {
   addMessage: (sessionId: string, message: Message) => void;
   updateMessage: (sessionId: string, messageId: string, content: string, metadata?: Record<string, any>) => void;
   deleteMessage: (sessionId: string, messageId: string) => void;
+  
+  // 上下文相关方法
+  updateSessionContext: (sessionId: string, context: number[]) => void;
   
   // 助手相关方法
   addAssistant: (assistant: Omit<Assistant, 'id' | 'createdAt' | 'updatedAt'>) => string;
@@ -243,6 +247,17 @@ export const useChatStore = create<ChatState>()(
       // 设置模型和流式选项
       setModelSettings: (model: string, streaming: boolean) => {
         set({ selectedModel: model, streamingEnabled: streaming });
+      },
+      
+      // 更新会话上下文
+      updateSessionContext: (sessionId, context) => {
+        set(state => {
+          const session = state.sessions.find(s => s.id === sessionId);
+          if (session) {
+            session.context = context;
+            session.updatedAt = new Date();
+          }
+        });
       }
     })),
     {

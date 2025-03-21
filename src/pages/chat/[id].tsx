@@ -6,6 +6,12 @@ import { ChatMessage, Message } from '@/components/chat/chat-message';
 import { useChatStore } from '@/store/chat-store';
 import { API_PATHS, DEFAULT_MODEL_ID, MessageRole } from '@/constants';
 import ChatPageLayout from './layout';
+import { createInitialAiMessage } from '@/utils/stream-helpers';
+import { 
+  createRequestData, 
+  handleNonStreamingResponse, 
+  handleStreamingResponse 
+} from '@/utils/api-helpers';
 
 export default function ChatSessionPage() {
   const params = useParams();
@@ -20,7 +26,8 @@ export default function ChatSessionPage() {
     addMessage,
     updateMessage,
     setCurrentSession,
-    getAssistant
+    getAssistant,
+    updateSessionContext
   } = useChatStore();
 
   // 获取当前会话
@@ -44,7 +51,7 @@ export default function ChatSessionPage() {
     // 创建用户消息
     const userMessage: Message = {
       id: `user-${Date.now()}`,
-      role: "user" as MessageRole,
+      role: MessageRole.USER,
       content,
       timestamp: new Date(),
     };
@@ -68,145 +75,43 @@ export default function ChatSessionPage() {
       const assistant = session.assistantId ? getAssistant(session.assistantId) : undefined;
 
       // 准备请求数据
-      const requestData: {
-        message: string;
-        history: { role: string; content: string }[];
-        model: string;
-        systemPrompt?: string;
-        stream: boolean;
-      } = {
-        message: content,
-        history: history,
-        model: selectedModel,
-        stream: streamingEnabled // 使用全局状态中的流式设置
-      };
-
-      // 如果有助手，添加系统提示词
-      if (assistant && assistant.prompt) {
-        requestData.systemPrompt = assistant.prompt;
-      }
+      const requestData = createRequestData(
+        content,
+        history,
+        selectedModel,
+        streamingEnabled,
+        session.context,
+        assistant?.prompt
+      );
 
       // 创建一个空的 AI 回复消息，用于流式更新
       const aiResponseId = `ai-${Date.now()}`;
-      const aiResponse: Message = {
-        id: aiResponseId,
-        role: "assistant" as MessageRole,
-        content: '',
-        timestamp: new Date(),
-        metadata: {
-          model: selectedModel,
-          isStreaming: true,
-          ...(assistant?.id && { assistantId: assistant.id }),
-          ...(assistant?.name && { assistantName: assistant.name })
-        }
-      };
+      const aiResponse = createInitialAiMessage(selectedModel, assistant);
+      aiResponse.id = aiResponseId;
 
       // 添加初始空消息到聊天记录
       if (streamingEnabled) {
         addMessage(chatId, aiResponse);
       }
 
-      if (!streamingEnabled) {
-        // 非流式响应处理
-        const response = await fetch(API_PATHS.OLLAMA, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            ...requestData,
-            stream: false
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error('API request failed');
-        }
-
-        const data = await response.json();
-
-        // 创建 AI 回复
-        const aiResponse: Message = {
-          id: `ai-${Date.now()}`,
-          role: 'assistant' as MessageRole,
-          content: data.response,
-          timestamp: new Date(),
-          metadata: {
-            model: data.model,
-            ...(assistant?.id && { assistantId: assistant.id }),
-            ...(assistant?.name && { assistantName: assistant.name })
-          }
-        };
-
-        // 添加 AI 回复到聊天记录
-        addMessage(chatId, aiResponse);
+      // 根据流式设置处理响应
+      if (streamingEnabled) {
+        await handleStreamingResponse(
+          API_PATHS.OLLAMA,
+          requestData,
+          chatId,
+          aiResponseId,
+          selectedModel,
+          { updateMessage, updateSessionContext }
+        );
       } else {
-        // 流式响应处理
-        const response = await fetch(API_PATHS.OLLAMA, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(requestData),
-        });
-
-        if (!response.ok) {
-          throw new Error('API request failed');
-        }
-
-        if (!response.body) {
-          throw new Error('No response body');
-        }
-
-        // 处理流式响应
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let accumulatedContent = '';
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          // 解码二进制数据
-          const chunk = decoder.decode(value, { stream: true });
-
-          try {
-            // 处理每个 JSON 块
-            const lines = chunk.split('\n').filter(line => line.trim());
-
-            for (const line of lines) {
-              const data = JSON.parse(line);
-
-              if (data.error) {
-                console.error('Stream error:', data.error);
-                continue;
-              }
-
-              if (data.chunk) {
-                // 更新累积内容
-                accumulatedContent += data.chunk;
-
-                // 更新消息内容
-                updateMessage(chatId, aiResponseId, accumulatedContent);
-              }
-
-              if (data.done) {
-                // 流式传输完成，更新最终内容和元数据
-                updateMessage(
-                  chatId,
-                  aiResponseId,
-                  data.fullResponse || accumulatedContent,
-                  {
-                    isStreaming: false,
-                    model: data.model || selectedModel
-                  }
-                );
-              }
-            }
-          } catch (e) {
-            console.error('Error parsing stream chunk:', e, chunk);
-          }
-        }
+        await handleNonStreamingResponse(
+          API_PATHS.OLLAMA,
+          requestData,
+          chatId,
+          assistant,
+          { addMessage, updateSessionContext }
+        );
       }
     } catch (error) {
       console.error('Error sending message:', error);
@@ -214,7 +119,7 @@ export default function ChatSessionPage() {
       // 添加错误消息
       const errorMessage: Message = {
         id: `error-${Date.now()}`,
-        role: 'system' as MessageRole,
+        role: MessageRole.SYSTEM,
         content: '抱歉，连接本地 Ollama 服务时发生错误。请确保 Ollama 服务正在运行，并且可以访问。',
         timestamp: new Date(),
       };
