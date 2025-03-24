@@ -1,0 +1,9 @@
+# AI工作流引擎依赖项
+SpiffWorkflow==1.1.0
+fastapi==0.78.0
+uvicorn==0.17.6
+pydantic==1.9.1
+httpx==0.23.0
+python-dotenv==0.20.0
+jsonschema==4.6.0
+PyYAML==6.0 

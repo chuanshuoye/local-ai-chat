@@ -1,0 +1,5 @@
+# AI工作流引擎依赖项
+SpiffWorkflow==1.1.0
+fastapi==0.115.12
+uvicorn==0.28.0
+flask==3.0.2
